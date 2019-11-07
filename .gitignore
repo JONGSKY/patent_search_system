@@ -1,0 +1,7 @@
+*.pyc
+.idea/
+
+.DS_Store
+
+# database 정보
+database.json
