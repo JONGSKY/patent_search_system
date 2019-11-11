@@ -81,34 +81,34 @@ WSGI_APPLICATION = 'patent_search_system.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-# with open('database.json') as json_file:
-#     json_data = json.load(json_file)
-#     host_ = json_data['host']
-#     user_ = json_data['user']
-#     password_ = json_data['password']
-#     port_ = json_data['port']
-#     database_ = json_data['database']
-#
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': database_, # DB명
-#         'USER': user_, # 데이터베이스 계정
-#         'PASSWORD': password_, # 계정 비밀번호
-#         'HOST': host_, # 데이테베이스 주소(IP)
-#         'PORT': port_, # 데이터베이스 포트(보통은 3306)
-#         'OPTIONS': {
-#             'init_command': 'SET sql_mode="STRICT_TRANS_TABLES"'
-#         }
-#     }
-# }
+with open('database.json') as json_file:
+    json_data = json.load(json_file)
+    host_ = json_data['host']
+    user_ = json_data['user']
+    password_ = json_data['password']
+    port_ = json_data['port']
+    database_ = json_data['database']
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': database_, # DB명
+        'USER': user_, # 데이터베이스 계정
+        'PASSWORD': password_, # 계정 비밀번호
+        'HOST': host_, # 데이테베이스 주소(IP)
+        'PORT': port_, # 데이터베이스 포트(보통은 3306)
+        'OPTIONS': {
+            'init_command': 'SET sql_mode="STRICT_TRANS_TABLES"'
+        }
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 
 # Password validation
