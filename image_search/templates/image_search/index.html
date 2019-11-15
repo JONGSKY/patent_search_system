@@ -1,15 +1,36 @@
+{% extends 'search/index.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>backend_1</title>
-<!--    css가져오는 코드입니다-->
-    <link rel="stylesheet" type="text/css" href="{% static 'image_search/style.css' %}">
+{% block search %}
+<style>
+    form {
 
-</head>
-<body>
-{{test}}
-</body>
-</html>
+        margin: 0 auto;
+
+    }
+</style>
+  <!-- Masthead -->
+  <header id='head' class="masthead">
+    <br>
+<div class="row text-center" style="width: 100%">
+      <form class="form-inline mr-auto">
+  <input class="form-control mr-sm-2"  name="keyword" type="text"
+         placeholder="검색하고 싶은 이미지를 입력해주세요" style="width:500px" aria-label="Search">
+  <button class="btn btn-outline-success btn-rounded btn-sm my-0" type="submit">Search   <i class="fa fa-search"></i></button>
+
+    </form>
+      </div>
+
+  </header>
+
+<script>
+$(document).ready(function() {
+  $('#home').attr("href", "{% url 'search' %}");
+  $("li").remove("#About, #Services, #Portfolio, #Contact");
+<!--  $("#head.masthead").css('background','linear-gradient(to bottom,rgba(92,77,66,.8) 0,rgba(92,77,66,.8) 100%),url(../img/bg-masthead.jpg)');-->
+  $("#head.masthead").css('background','#746962');
+
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,169 @@
+{% extends 'search/index.html' %}
+{% load static %}
+
+{% block search %}
+<style>
+     text:hover {
+        stroke: black;
+    }
+    form {
+
+        margin: 0 auto;
+
+    }
+</style>
+
+  <!-- Masthead -->
+<header id='head' class="masthead">
+      <br>
+    <div class="row text-center" style="width: 100%">
+      <form class="form-inline mr-auto" action="{% url 'text_search_1' %}" method="get">
+        <input class="form-control mr-sm-2"  name="keyword" id="search_keyword" type="text" value="{{search_keyword}}"
+                placeholder="검색하고 싶은 키워드를 입력해주세요" style="width:500px" aria-label="Search">
+        <button class="btn btn-outline-success btn-rounded btn-sm my-0" type="submit">Wordcloud   <i class="fa fa-search"></i></button>
+      </form>
+    </div>
+
+
+    <br>
+
+    <div>
+        <center>
+          <div id="keyword_list"></div>
+          <div id="wordcloud"></div>
+        </center>
+    </div>
+
+    <div class="row text-center" style="width: 100%">
+      <form action="{% url 'text_search_2' %}" method="get">
+        <input tpye="text" name="final_keyword" id="final_search_keyword"  value="{{search_keyword}}" style="display:none;"/>
+        <button id="final_search_button" type="submit" class="btn btn-primary"> 현재 키워드들로 검색하기 </button>
+      </form>
+    </div>
+</header>
+
+
+
+<!--메뉴바 정리-->
+<script>
+$(function(){
+  $('#home').attr("href", "{% url 'search' %}");
+  $("li").remove("#About, #Services, #Portfolio, #Contact");
+<!--  $("#head.masthead").css('background','linear-gradient(to bottom,rgba(92,77,66,.8) 0,rgba(92,77,66,.8) 100%),url(../img/bg-masthead.jpg)');-->
+  $("#head.masthead").css('background','#746962');
+});
+</script>
+
+<script>
+    $('body').on("click", ".keywords", function(){
+        $(this).remove();
+
+        var text_val = $('#final_search_keyword').val();
+
+        var del_val = $(this).attr('value');
+        var del_val = del_val.substring(0,del_val.length-2);
+        var delete_val = " and " + del_val;
+
+        var text_val = text_val.replace(delete_val, "");
+
+        $('#final_search_keyword').val(text_val);
+
+<!--        wordcloud 다시만들기-->
+        $("#cloud_s").remove();
+
+        myWords.push({word:del_val, size: "40"})
+
+        var layout = d3.layout.cloud()
+            .size([width, height])
+            .words(myWords.map(function(d) { return {text: d.word, size:d.size}; }))
+            .padding(5)        //space between words
+            .rotate(function() { return ~~(Math.random() * 2) * 90; })
+            .fontSize(function(d) { return d.size; })      // font size of words
+            .on("end", draw);
+        layout.start();
+    });
+</script>
+
+<script>
+
+// List of words
+var myWords = [{% for keyword in myWords %}
+{word: "{{keyword.0}}", size: 60-{{forloop.counter}}*1.5},
+        {% endfor %}]
+
+// set the dimensions and margins of the graph
+var margin = {top: 10, right: 10, bottom: 10, left: 10},
+    width = 450 - margin.left - margin.right,
+    height = 450 - margin.top - margin.bottom;
+
+// append the svg object to the body of the page
+var svg = d3.select("#wordcloud").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .attr("id", "wordcloud_svg")
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+// Constructs a new cloud layout instance. It run an algorithm to find the position of words that suits your requirements
+// Wordcloud features that are different from one word to the other must be here
+var layout = d3.layout.cloud()
+  .size([width, height])
+  .words(myWords.map(function(d) { return {text: d.word, size:d.size}; }))
+  .padding(5)        //space between words
+  .rotate(function() { return ~~(Math.random() * 2) * 90; })
+  .fontSize(function(d) { return d.size; })      // font size of words
+  .on("end", draw);
+layout.start();
+
+// This function takes the output of 'layout' above and draw the words
+// Wordcloud features that are THE SAME from one word to the other can be here
+function draw(words) {
+  svg
+    .append("g")
+      .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
+      .attr("id", "cloud_s")
+      .selectAll("text")
+        .data(words)
+      .enter().append("text")
+        .style("font-size", function(d) { return d.size; })
+        .style("fill", "#69b3a2")
+        .attr("text-anchor", "middle")
+        .style("font-family", "Impact")
+        .attr("transform", function(d) {
+          return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+        })
+        .text(function(d) { return d.text; })
+        .on("click", function(d){
+
+                var ctr = d.text + " X";
+                var keyword_tag = "<input type='submit' name='add_keyword' class='keywords' style='background-color:#D9E5FF; color:#6799FF; margin:10px 5px 10px 5px' value='" + ctr + "'/>";
+                $('#keyword_list').append(keyword_tag);
+
+                var text_val = $('#final_search_keyword').val();
+                text_val = text_val + " and " + d.text;
+                $('#final_search_keyword').val(text_val);
+
+                $("#cloud_s").remove();
+
+                for(var i in myWords){
+                    if(myWords[i].word==d.text){
+                        myWords.splice(i,1);}
+                    }
+
+                var layout = d3.layout.cloud()
+                  .size([width, height])
+                  .words(myWords.map(function(d) { return {text: d.word, size:d.size}; }))
+                  .padding(5)        //space between words
+                  .rotate(function() { return ~~(Math.random() * 2) * 90; })
+                  .fontSize(function(d) { return d.size; })      // font size of words
+                  .on("end", draw);
+                layout.start();
+                })
+            ;
+
+}
+</script>
+
+
+{% endblock %}

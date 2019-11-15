@@ -1,15 +1,58 @@
+{% extends 'search/index.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>text_search</title>
-<!--    css가져오는 코드입니다-->
-    <link rel="stylesheet" type="text/css" href="{% static 'text_search/style.css' %}">
+{% block search %}
+<style>
+    form {
 
-</head>
-<body>
-{{test}}
-</body>
-</html>
+        margin: 0 auto;
+
+    }
+</style>
+
+  <!-- Masthead -->
+<header id='head' class="masthead">
+      <br>
+    <div class="row text-center" style="width: 100%">
+      <form class="form-inline mr-auto" action="{% url 'text_search_1' %}" method="get">
+        <input class="form-control mr-sm-2"  name="keyword" id="search_keyword" type="text"
+                placeholder="검색하고 싶은 키워드를 입력해주세요" style="width:500px" aria-label="Search">
+        <button class="btn btn-outline-success btn-rounded btn-sm my-0" type="submit">Wordcloud   <i class="fa fa-search"></i></button>
+      </form>
+    </div>
+
+
+    <br><br>
+
+
+    <div class="row text-center" style="width: 100%">
+      <form action="{% url 'text_search_2' %}" method="get">
+        <input tpye="text" name="final_keyword" id="final_search_keyword"  value="" style="display:none;"/>
+        <button id="final_search_button" type="submit" class="btn btn-primary"> 현재 키워드들로 검색하기 </button>
+      </form>
+    </div>
+</header>
+
+
+<!--메뉴바 정리-->
+<script>
+$(function(){
+  $('#home').attr("href", "{% url 'search' %}");
+  $("li").remove("#About, #Services, #Portfolio, #Contact");
+<!--  $("#head.masthead").css('background','linear-gradient(to bottom,rgba(92,77,66,.8) 0,rgba(92,77,66,.8) 100%),url(../img/bg-masthead.jpg)');-->
+  $("#head.masthead").css('background','#746962');
+});
+</script>
+
+
+<!--검색 키워드 최종 키워드로 바꾸기 -->
+<script>
+$(function(){
+    $('#final_search_button').click(function(){
+        var final_keyword = $('#search_keyword').val();
+        $('#final_search_keyword').val(final_keyword);
+    });
+});
+</script>
+
+{% endblock %}
