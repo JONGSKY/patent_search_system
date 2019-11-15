@@ -1,0 +1,102 @@
+{% extends 'search/index.html' %}
+{% load static %}
+
+{% block search %}
+<style>
+    form {
+
+        margin: 0 auto;
+
+    }
+</style>
+
+
+  <!-- Masthead -->
+<header id='head' class="masthead">
+      <br>
+    <div class="row text-center" style="width: 100%">
+      <form class="form-inline mr-auto" action="{% url 'text_search_1' %}" method="get">
+        <input class="form-control mr-sm-2"  name="keyword" id="search_keyword" type="text" value="{{final_keyword}}"
+                placeholder="검색하고 싶은 키워드를 입력해주세요" style="width:500px" aria-label="Search">
+        <button class="btn btn-outline-success btn-rounded btn-sm my-0" type="submit">Wordcloud   <i class="fa fa-search"></i></button>
+      </form>
+    </div>
+
+
+    <br><br>
+
+
+    <div class="row text-center" style="width: 100%">
+      <form action="{% url 'text_search_2' %}" method="get">
+        <input tpye="text" name="final_keyword" id="final_search_keyword"  value="{{final_keyword}}" style="display:none;"/>
+        <button id="final_search_button" type="submit" class="btn btn-primary"> 현재 키워드들로 검색하기 </button>
+      </form>
+    </div>
+
+    <br><br>
+
+    <div>
+    <table class="table" style="table-layout:fixed">
+        <thead class="thead-dark">
+            <th width="5%">번호</th>
+            <th width="20%">title</th>
+            <th width="atuo">abstract</th>
+
+        </thead>
+        <tbody>
+
+                    {% for data in data_list %}
+            <tr style = "cursor:pointer;" onClick = " location.href='https://patents.google.com/patent/GB2314148A/en?q=python&oq=python' ">
+                <td>
+                    {{ forloop.counter }}
+                </td>
+                <td style="text-overflow:ellipsis; overflow:hidden; white-space:nowrap">
+                    {{data.title}}
+                </td>
+                <td style="text-overflow:ellipsis; overflow:hidden; white-space:nowrap">
+                    {{data.abstract}}
+                </td>
+
+            </tr>
+                    {% endfor %}
+
+        </tbody>
+    </table>
+</div>
+
+</header>
+
+<!--메뉴바 정리-->
+<script>
+$(function(){
+  $('#home').attr("href", "{% url 'search' %}");
+  $("li").remove("#About, #Services, #Portfolio, #Contact");
+<!--  $("#head.masthead").css('background','linear-gradient(to bottom,rgba(92,77,66,.8) 0,rgba(92,77,66,.8) 100%),url(../img/bg-masthead.jpg)');-->
+  $("#head.masthead").css('background','#746962');
+});
+</script>
+
+<!--검색 키워드 최종 키워드로 바꾸기 -->
+<script>
+$(function(){
+    $('#final_search_button').click(function(){
+        var final_keyword = $('#search_keyword').val();
+        $('#final_search_keyword').val(final_keyword);
+    });
+});
+</script>
+
+<!--<script>-->
+<!--$(function(){-->
+<!--  $('.form-control').val("{{search_keyword}}");-->
+<!--  {% for keyword in final_keyword %}-->
+<!--  var ctr = "{{keyword}}" + " X";-->
+<!--    var keyword_tag = "<input type='submit' name='add_keyword' class='keywords' style='background-color:#D9E5FF; color:#6799FF; margin:10px 5px 10px 5px' value='" + ctr + "'/>";-->
+<!--    $('#keyword_list').append(keyword_tag);-->
+<!--    {% endfor %}-->
+<!--});-->
+<!--</script>-->
+
+
+
+{% endblock %}

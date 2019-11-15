@@ -19,6 +19,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
+    path('', include('search.urls')),
     path('search/', include('search.urls')),
     path('text_search/', include('text_search.urls')),
     path('image_search/', include('image_search.urls')),
