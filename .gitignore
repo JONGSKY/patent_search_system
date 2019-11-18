@@ -3,5 +3,8 @@
 
 .DS_Store
 
-# database 정보
+# information of database
 database.json
+
+# word embedding model
+glove_all_200.model
