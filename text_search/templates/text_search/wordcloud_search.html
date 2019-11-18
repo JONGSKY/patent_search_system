@@ -54,6 +54,15 @@ $(function(){
 });
 </script>
 
+<!--wordcloud를 만들 수 없을 때-->
+<script>
+$( document ).ready(function() {
+    if ("{{myWords}}" == "[]"){
+        alert(' 죄송합니다. \n 해당 검색어로는 wordcloud 제작이 어렵습니다! \n 다른 검색어로 검색해주세요');}
+    else {}
+    });
+</script>
+
 <!--검색 키워드 없을 때 -->
 <script>
 $('#final_search_button').click(function(){

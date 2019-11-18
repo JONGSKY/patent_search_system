@@ -36,6 +36,8 @@
     <br><br>
 
     <div>
+
+    <div class="row text-center" style="width: 100%">
     <table class="table" style="table-layout:fixed">
         <thead class="thead-dark">
             <th width="5%">번호</th>
@@ -44,7 +46,6 @@
 
         </thead>
         <tbody>
-
                     {% for data in data_list %}
             <tr style = "cursor:pointer;" onClick = " location.href='https://patents.google.com/patent/GB2314148A/en?q=python&oq=python' ">
                 <td>
@@ -59,10 +60,29 @@
 
             </tr>
                     {% endfor %}
-
         </tbody>
     </table>
-</div>
+    </div>
+
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center">
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Previous</span>
+              </a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Next</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
 
 </header>
 
