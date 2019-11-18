@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block search %}
+
 <style>
     form {
 
@@ -9,27 +10,33 @@
 
     }
 </style>
+
+  <script src="{% static 'image_search/js/preview_image.js' %}"></script>
+
   <!-- Masthead -->
   <header id='head' class="masthead">
     <br>
-<div class="row text-center" style="width: 100%">
-      <form class="form-inline mr-auto">
-  <input class="form-control mr-sm-2"  name="keyword" type="text"
-         placeholder="검색하고 싶은 이미지를 입력해주세요" style="width:500px" aria-label="Search">
-  <button class="btn btn-outline-success btn-rounded btn-sm my-0" type="submit">Search   <i class="fa fa-search"></i></button>
 
+  <div class="row text-center" style="width: 100%">
+    <form>
+      <input style="background-color: #998A81;" type="file" name="profile_pt" id="profile_pt" onchange="previewImage(this,'View_area')">
+      <center>
+        <br>
+        <div id='View_area' style='position:relative; width: 100px; height: 100px; color: black; border: 0px solid black; dispaly: inline; '>
+        </div>
+      </center>
     </form>
-      </div>
+  </div>
 
   </header>
 
+<!--메뉴바 정리-->
 <script>
-$(document).ready(function() {
+$(function(){
   $('#home').attr("href", "{% url 'search' %}");
   $("li").remove("#About, #Services, #Portfolio, #Contact");
 <!--  $("#head.masthead").css('background','linear-gradient(to bottom,rgba(92,77,66,.8) 0,rgba(92,77,66,.8) 100%),url(../img/bg-masthead.jpg)');-->
   $("#head.masthead").css('background','#746962');
-
 });
 </script>
 
