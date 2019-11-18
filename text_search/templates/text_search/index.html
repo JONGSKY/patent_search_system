@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block search %}
+
 <style>
     form {
 
@@ -14,10 +15,10 @@
 <header id='head' class="masthead">
       <br>
     <div class="row text-center" style="width: 100%">
-      <form class="form-inline mr-auto" action="{% url 'text_search_1' %}" method="get">
+      <form id='submit_page_1' class="form-inline mr-auto" action="{% url 'text_search_1' %}" method="get">
         <input class="form-control mr-sm-2"  name="keyword" id="search_keyword" type="text"
                 placeholder="검색하고 싶은 키워드를 입력해주세요" style="width:500px" aria-label="Search">
-        <button class="btn btn-outline-success btn-rounded btn-sm my-0" type="submit">Wordcloud   <i class="fa fa-search"></i></button>
+        <button id="button_submit" class="btn btn-outline-success btn-rounded btn-sm my-0" type="submit">Wordcloud   <i class="fa fa-search"></i></button>
       </form>
     </div>
 
@@ -26,7 +27,7 @@
 
 
     <div class="row text-center" style="width: 100%">
-      <form action="{% url 'text_search_2' %}" method="get">
+      <form id='submit_page_2' action="{% url 'text_search_2' %}" method="get">
         <input tpye="text" name="final_keyword" id="final_search_keyword"  value="" style="display:none;"/>
         <button id="final_search_button" type="submit" class="btn btn-primary"> 현재 키워드들로 검색하기 </button>
       </form>
@@ -44,7 +45,6 @@ $(function(){
 });
 </script>
 
-
 <!--검색 키워드 최종 키워드로 바꾸기 -->
 <script>
 $(function(){
@@ -53,6 +53,25 @@ $(function(){
         $('#final_search_keyword').val(final_keyword);
     });
 });
+</script>
+
+
+<!--검색 키워드 없을 때 -->
+<script>
+$('#final_search_button').click(function(){
+    var search_keyword = $('#search_keyword').val();
+    if (search_keyword == ""){
+        alert('검색어를 입력 후 검색해주세요!');
+        $("#submit_page_2").attr("action", "{% url 'text_search' %}");}
+    else {}
+    });
+$('#button_submit').click(function(){
+    var search_keyword = $('#search_keyword').val();
+    if (search_keyword == ""){
+        alert('검색어를 입력 후 검색해주세요!');
+        $("#submit_page_1").attr("action", "{% url 'text_search' %}");}
+    else {}
+    });
 </script>
 
 {% endblock %}
