@@ -49,7 +49,7 @@
                 aria-expanded="true" aria-controls="collapse_{{ forloop.counter }}">
                     {{data.title}}
         </button>
-        <button class="btn" type="button" style="float: right;" onclick="location.href='patents.google.com/?q='+'{{data.title}}' ">
+        <button class="btn" type="button" style="float: right;" onclick="location.href='http://patents.google.com/?q='+'{{data.title}}' ">
                     해당 사이트로 가기
         </button>
       </h2>
@@ -59,7 +59,7 @@
       <div class="card-body">
           <div class="row"><h5>&nbsp;Date&nbsp;</h5>:&nbsp; {{data.date}}</div>
           <div class="row"><h5>&nbsp;Country&nbsp; </h5>:&nbsp; {{data.country}}</div>
-          <div class="row"><h5>&nbsp;Abstract&nbsp; </h5>&nbsp;&nbsp;: {{data.abstract}}</div>
+          <div class="row"><h5>&nbsp;Abstract&nbsp; </h5>&nbsp;&nbsp; {{data.abstract}}</div>
       </div>
     </div>
   </div>

@@ -1,8 +1,8 @@
 from django.shortcuts import render
-# from glove import Corpus, Glove
-# from glove import Glove
-#
-# model = Glove.load('glove_all_200.model')
+
+
+from gensim.models import KeyedVectors
+model = KeyedVectors.load('glove_word2vec_format.model')
 
 # Create your views here.
 from django.http import HttpResponse
@@ -12,11 +12,6 @@ from datetime import datetime
 ## db에서 patent가져오기
 from text_search.models import Patent
 from django.db.models import Q
-
-## wordcloud
-# from nltk.tokenize import RegexpTokenizer
-# from nltk import FreqDist
-# from nltk.tag import pos_tag
 
 
 def index(request):
@@ -31,10 +26,12 @@ def wordcloud_search(request):
    list_search_keyword = search_keyword.split('and')
    print(list_search_keyword)
    try:
-      word_similarity = []
-      for keyword in list_search_keyword:
-         word_similarity += model.most_similar(keyword.strip().lower(), 30)
-      word_similarity = sorted(word_similarity, key=lambda x: x[1], reverse=True)[:30]
+      list_search_keyword = [word.lower().strip() for word in list_search_keyword]
+      word_similarity = model.wv.most_similar(list_search_keyword, topn=30)
+      # word_similarity = []
+      # for keyword in list_search_keyword:
+      #    word_similarity += model.most_similar(keyword.strip().lower(), 30)
+      # word_similarity = sorted(word_similarity, key=lambda x: x[1], reverse=True)[:30]
    except:
       word_similarity = []
       # similar_words = model.most_similar(search_keyword.lower(), 30)
