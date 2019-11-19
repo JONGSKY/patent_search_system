@@ -1,7 +1,8 @@
 from django.shortcuts import render
-from glove import Corpus, Glove
-
-model = Glove.load('glove_all_200.model')
+# from glove import Corpus, Glove
+# from glove import Glove
+#
+# model = Glove.load('glove_all_200.model')
 
 # Create your views here.
 from django.http import HttpResponse

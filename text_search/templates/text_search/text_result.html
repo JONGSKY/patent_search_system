@@ -10,10 +10,6 @@
     }
 </style>
 
-<!--  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">-->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-
 <header id='head' class="masthead"></header>
 
     <div class="container">
@@ -42,78 +38,36 @@
     <br>
 
 
-    <div>
-
-
-<!--        <div class="accordion" id="accordionExample">-->
-        <div class="panel-group" id="accordion">
+    <div class="panel-group" id="accordion">
 
                                                     {% for data in data_list %}
 
   <div class="card">
     <div class="card-header" id="heading">
       <h2 class="mb-0">
-        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        <button id='clickme' class="btn btn-link" type="button" data-target="#collapse_{{ forloop.counter }}"
+                aria-expanded="true" aria-controls="collapse_{{ forloop.counter }}">
                     {{data.title}}
         </button>
-        <button class="btn" type="button" style="float: right;" onclick="location.href='https://patents.google.com/?q='+'{{data.title}}' ">
+        <button class="btn" type="button" style="float: right;" onclick="location.href='patents.google.com/?q='+'{{data.title}}' ">
                     해당 사이트로 가기
         </button>
       </h2>
     </div>
 
-    <div id="collapseOne" class="collapse" aria-labelledby="heading" data-parent="#accordionExample">
+    <div id="collapse_{{ forloop.counter }}" class="collapse" aria-labelledby="heading">
       <div class="card-body">
-                    {{data.abstract}}
+          <div class="row"><h5>&nbsp;Date&nbsp;</h5>:&nbsp; {{data.date}}</div>
+          <div class="row"><h5>&nbsp;Country&nbsp; </h5>:&nbsp; {{data.country}}</div>
+          <div class="row"><h5>&nbsp;Abstract&nbsp; </h5>&nbsp;&nbsp;: {{data.abstract}}</div>
       </div>
     </div>
   </div>
                     {% endfor %}
+        </div>
 
-<!--  <div class="card">-->
-<!--    <div class="card-header" id="headingThree">-->
-<!--      <h2 class="mb-0">-->
-<!--        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">-->
-<!--          Collapsible Group Item #3-->
-<!--        </button>-->
-<!--      </h2>-->
-<!--    </div>-->
-<!--    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">-->
-<!--      <div class="card-body">-->
-<!--        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
-
-<!--    <div class="row text-center" style="width: 100%">-->
-<!--    <table class="table" style="table-layout:fixed">-->
-<!--        <thead class="thead-dark">-->
-<!--            <th width="5%">번호</th>-->
-<!--            <th width="20%">title</th>-->
-<!--            <th width="atuo">abstract</th>-->
-
-<!--        </thead>-->
-<!--        <tbody>-->
-<!--                    {% for data in data_list %}-->
-<!--            <tr style = "cursor:pointer;" onClick = " location.href='https://patents.google.com/patent/GB2314148A/en?q=python&oq=python' ">-->
-<!--                <td>-->
-<!--                    {{ forloop.counter }}-->
-<!--                </td>-->
-<!--                <td style="text-overflow:ellipsis; overflow:hidden; white-space:nowrap">-->
-<!--                    {{data.title}}-->
-<!--                </td>-->
-<!--                <td style="text-overflow:ellipsis; overflow:hidden; white-space:nowrap">-->
-<!--                    {{data.abstract}}-->
-<!--                </td>-->
-
-<!--            </tr>-->
-<!--                    {% endfor %}-->
-<!--        </tbody>-->
-<!--    </table>-->
-<!--    </div>-->
     <br>
-
+        <div>
         <nav aria-label="Page navigation example">
           <ul class="pagination justify-content-center">
             <li class="page-item">
@@ -133,6 +87,7 @@
             </li>
           </ul>
         </nav>
+    </div>
 
     </div>
 
@@ -174,6 +129,16 @@ $('#button_submit').click(function(){
         $("#submit_page_1").attr("action", "{% url 'text_search' %}");}
     else {}
     });
+</script>
+
+<!--클릭시 toggle 내려오기-->
+<script>
+$('button').click(function() {
+    var target = $(this).attr('data-target');
+        $(target ).slideToggle( "slow", function() {
+        // Animation complete.
+    });
+});
 </script>
 
 <!--<script>-->
