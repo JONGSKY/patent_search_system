@@ -7,4 +7,4 @@
 database.json
 
 # word embedding model
-glove_all_200.model
+glove_word2vec_format.model*
