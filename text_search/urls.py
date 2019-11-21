@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='text_search'),
+    path('2', views.index_2, name='text_search_2'),
     path('wordcloud_search', views.wordcloud_search, name='text_search_1'),
     path('text_result', views.text_result, name='text_search_2'),
 
