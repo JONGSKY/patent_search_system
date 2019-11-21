@@ -2,12 +2,12 @@
 {% load static %}
 
 {% block javasrcipt %}
-    <script src="{% static 'text_search/text_search.js' %}"></script>
+<script src="{% static 'text_search/text_search.js' %}"></script>
 {% endblock %}
 
 {% block stylesheet %}
-    <link href="{% static 'text_search/style.css' %}" rel="stylesheet">
-    <style>
+<link href="{% static 'text_search/style.css' %}" rel="stylesheet">
+<style>
         footer {
             position:fixed;
             bottom:0;
@@ -16,61 +16,69 @@
         #footer {
             height: 115px;
         }
-    </style>
+
+
+</style>
 {% endblock %}
 
 {% block home_url %}
-    <a id='home' class="navbar-brand js-scroll-trigger" href="{% url 'home' %}">Patent Search</a>
+<a id='home' class="navbar-brand js-scroll-trigger" href="{% url 'home' %}">Patent Search</a>
 {% endblock %}
 
 {% block main_page %}
-    <section class="page-section bg-dark text-white" id="search">
-        <br>
-        <div class="container">
-            <div class="row justify-content-center align-items-center">
-                <div class="col-lg-8 text-center">
-                    <h2 class="text-white mt-0">Patent Text Search</h2>
-                    <hr class="divider light my-4">
-                    <br>
-                    <div class="row text-center">
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control text-center" placeholder="검색하고 싶은 키워드를 입력해주세요" aria-label="search_keyword" id="search_keyword" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button id="submit_keyword" class="btn btn-outline-secondary" type="button"> WordCloud <i class="fa fa-search" aria-hidden="true"></i></button>
-                            </div>
+<section class="page-section bg-dark text-white" id="search">
+    <br>
+    <div class="container">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="text-white mt-0">Patent Text Search</h2>
+                <hr class="divider light my-4">
+                <br>
+                <div class="row text-center">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control text-center" placeholder="검색하고 싶은 키워드를 입력해주세요"
+                               aria-label="search_keyword" id="search_keyword" aria-describedby="basic-addon2">
+                        <div class="input-group-append">
+                            <button id="submit_keyword" class="btn btn-outline-secondary" type="button"> WordCloud <i
+                                    class="fa fa-search" aria-hidden="true"></i></button>
                         </div>
                     </div>
-                    <div id="keyword_list" class="form-inline form-group row text-center"></div>
-                    <div class="container">
-                        <button id="search_patent" type="button" class="btn btn-primary"> 현재 키워드들로 검색하기 </button>
-                    </div>
+                </div>
+                <div id="keyword_list" class="form-inline form-group row text-center"></div>
+                <div class="container">
+                    <button id="search_patent" type="button" class="btn btn-primary"> 현재 키워드들로 검색하기</button>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <section class="page-section" id="wordcloud_section" style="display: none;">
-        <div class="container">
-            <h2 class="text-center mt-0">WordCloud</h2>
-            <hr class="divider my-4">
-            <div class="col-sm-1 col-md-2"></div>
-            <div id="wordcloud" class="container col-sm-9, col-md-8">
-                <svg id="wordcloud_svg"></svg>
-            </div>
-            <div class="col-sm-1 col-md-2"></div>
+<section class="page-section" id="wordcloud_section" style="display: none;">
+    <div class="container">
+        <h2 class="text-center mt-0">WordCloud</h2>
+        <hr class="divider my-4">
+        <div class="col-sm-1 col-md-2"></div>
+        <div id="wordcloud" class="container col-sm-9, col-md-8">
+            <svg id="wordcloud_svg"></svg>
         </div>
-    </section>
+        <div class="col-sm-1 col-md-2"></div>
+    </div>
+</section>
 
-    <section class="page-section" id="result_section" style="display: none;">
-        <div class="container">
-            <h2 class="text-center mt-0">Results</h2>
-            <hr class="divider my-4">
-            <div id="results" class="container">
-                <div id="accordion">
-                </div>
+<section class="page-section" id="result_section" style="display: none;">
+    <div class="container">
+        <h2 class="text-center mt-0">Results</h2>
+        <hr class="divider my-4">
+        <div id="results" class="container">
+            <div>
+                <button id="all_open" class="btn btn-link" type="button"> 전체 열기</button>
+                <button id="all_close" class="btn btn-link" type="button"> 전체 닫기</button>
+            </div>
+            <div id="accordion">
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <div id='footer'></div>
+<div id='footer'></div>
 {% endblock %}

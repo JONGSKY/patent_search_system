@@ -129,21 +129,20 @@ $('#search_patent').click(function(){
                 $("#accordion").empty();
                 $("#cloud_s").remove();
 
-                var event_data = '<section class="page-section" id="services_result">'
-                    + '<div class="container">'
-                    + '<h2 class="text-center mt-0">Result</h2>'
-                    + '<hr class="divider my-4">'
-                    + '<div class="row">'
-                    + '<div class="panel-group" id="accordion">'
-                    + '<div>'
-                    + '<button id="all_open" class="btn btn-link" type="button"> 전체 열기 </button>'
-                    + '<button id="all_close" class="btn btn-link" type="button"> 전체 닫기 </button>'
-                    + '</div>';
-
+//                var event_data = '<section class="page-section" id="services_result">'
+//                    + '<div class="container">'
+//                    + '<h2 class="text-center mt-0">Result</h2>'
+//                    + '<hr class="divider my-4">'
+//                    + '<div class="row">'
+//                    + '<div class="panel-group" id="accordion">'
+//                    + '<div>'
+//                    + '<button id="all_open" class="btn btn-link" type="button"> 전체 열기 </button>'
+//                    + '<button id="all_close" class="btn btn-link" type="button"> 전체 닫기 </button>'
+//                    + '</div>';
 
                 $.each(data, function(key, value) {
                     var link_url = "http://patents.google.com/patent/" + value.country + value.number + value.kind;
-                    var title_button = '<button class="btn btn-link card-link" data-toggle="collapse" href="#collapse_' + key + '">'
+                    var title_button = '<button class="btn btn-link card-link" data-toggle="collapse" href="#collapse_'+ key + '">'
                         + value.number + '  ' + value.title + '</button>';
                     var link_button = '<button class="btn btn-secondary" type="button" style="float: right;" ' + 'onclick="' +
                         'window.open(\'' + link_url + '\')">해당 사이트로 이동 <i class="fa fa-paper-plane" aria-hidden="true"></i></button>';
@@ -161,5 +160,31 @@ $('#search_patent').click(function(){
                 });
             }
         })
+    }
+});
+
+// 클릭시 toggle 내려오기
+$(document).on("click", "button", function(){
+    var target = $(this).attr('data-target');
+        $(target ).slideToggle( "slow", function() {
+        // Animation complete.
+    });
+});
+
+// 전체 열고 닫기
+$(document).on("click", "#all_open", function(){
+    for(var i=0; i<9; i++){
+    var target = "#collapse_"+i;
+    $(target).slideDown( "slow", function() {
+        // Animation complete.
+    });
+    }
+});
+$(document).on("click", "#all_close", function(){
+    for(var i=0; i<9; i++){
+    var target = "#collapse_"+i;
+    $(target).slideUp( "slow", function() {
+        // Animation complete.
+    });
     }
 });
