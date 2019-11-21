@@ -9,7 +9,6 @@ import operator
 
 model = KeyedVectors.load('glove_word2vec_format.model')
 
-
 def index(request):
     context = {
     }

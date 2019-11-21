@@ -10,10 +10,6 @@
     }
 </style>
 
-<!--  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">-->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-
 <header id='head' class="masthead"></header>
 
     <div class="container">
@@ -42,78 +38,39 @@
     <br>
 
 
+    <div class="panel-group" id="accordion">
     <div>
-
-
-<!--        <div class="accordion" id="accordionExample">-->
-        <div class="panel-group" id="accordion">
-
+        <button id="all_open" class="btn btn-link" type="button"> 전체 열기 </button>
+        <button id="all_close" class="btn btn-link" type="button"> 전체 닫기 </button>
+    </div>
                                                     {% for data in data_list %}
-
   <div class="card">
     <div class="card-header" id="heading">
       <h2 class="mb-0">
-        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    {{data.title}}
+        <button id='clickme' class="btn btn-link" type="button" data-target="#collapse_{{ forloop.counter }}"
+                aria-expanded="true" aria-controls="collapse_{{ forloop.counter }}">
+                    {{data.number}}&nbsp;&nbsp;&nbsp;{{data.title}}
         </button>
-        <button class="btn" type="button" style="float: right;" onclick="location.href='https://patents.google.com/?q='+'{{data.title}}' ">
-                    해당 사이트로 가기
+        <button class="btn btn-secondary" type="button" style="float: right;" onclick="location.href='http://patents.google.com/patent/'+'{{data.country}}{{data.number}}{{data.kind}}' ">
+                    해당 사이트로 이동&nbsp;<i class="fa fa-paper-plane" aria-hidden="true"></i>
+
         </button>
       </h2>
     </div>
 
-    <div id="collapseOne" class="collapse" aria-labelledby="heading" data-parent="#accordionExample">
+    <div id="collapse_{{ forloop.counter }}" class="collapse" aria-labelledby="heading">
       <div class="card-body">
-                    {{data.abstract}}
+          <div class="row"><h5>&nbsp;Date&nbsp;</h5>:&nbsp; {{data.date}}</div>
+          <div class="row"><h5>&nbsp;Country&nbsp; </h5>:&nbsp; {{data.country}}</div>
+          <div class="row"><h5>&nbsp;Abstract&nbsp; </h5>&nbsp;&nbsp; {{data.abstract}}</div>
       </div>
     </div>
   </div>
                     {% endfor %}
+        </div>
 
-<!--  <div class="card">-->
-<!--    <div class="card-header" id="headingThree">-->
-<!--      <h2 class="mb-0">-->
-<!--        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">-->
-<!--          Collapsible Group Item #3-->
-<!--        </button>-->
-<!--      </h2>-->
-<!--    </div>-->
-<!--    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">-->
-<!--      <div class="card-body">-->
-<!--        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
-
-<!--    <div class="row text-center" style="width: 100%">-->
-<!--    <table class="table" style="table-layout:fixed">-->
-<!--        <thead class="thead-dark">-->
-<!--            <th width="5%">번호</th>-->
-<!--            <th width="20%">title</th>-->
-<!--            <th width="atuo">abstract</th>-->
-
-<!--        </thead>-->
-<!--        <tbody>-->
-<!--                    {% for data in data_list %}-->
-<!--            <tr style = "cursor:pointer;" onClick = " location.href='https://patents.google.com/patent/GB2314148A/en?q=python&oq=python' ">-->
-<!--                <td>-->
-<!--                    {{ forloop.counter }}-->
-<!--                </td>-->
-<!--                <td style="text-overflow:ellipsis; overflow:hidden; white-space:nowrap">-->
-<!--                    {{data.title}}-->
-<!--                </td>-->
-<!--                <td style="text-overflow:ellipsis; overflow:hidden; white-space:nowrap">-->
-<!--                    {{data.abstract}}-->
-<!--                </td>-->
-
-<!--            </tr>-->
-<!--                    {% endfor %}-->
-<!--        </tbody>-->
-<!--    </table>-->
-<!--    </div>-->
     <br>
-
+        <div>
         <nav aria-label="Page navigation example">
           <ul class="pagination justify-content-center">
             <li class="page-item">
@@ -133,6 +90,7 @@
             </li>
           </ul>
         </nav>
+    </div>
 
     </div>
 
@@ -144,6 +102,7 @@ $(function(){
   $("li").remove("#About, #Services, #Portfolio, #Contact");
 <!--  $("#head.masthead").css('background','linear-gradient(to bottom,rgba(92,77,66,.8) 0,rgba(92,77,66,.8) 100%),url(../img/bg-masthead.jpg)');-->
 <!--  $("#head.masthead").css('background','#746962');-->
+  $("#mainNav").css({'background':'#746962'});
   $("#head.masthead").css({'height': 0, 'min-height':0, 'background':'#746962'});
 });
 </script>
@@ -174,6 +133,36 @@ $('#button_submit').click(function(){
         $("#submit_page_1").attr("action", "{% url 'text_search' %}");}
     else {}
     });
+</script>
+
+<!--클릭시 toggle 내려오기-->
+<script>
+$('button').click(function() {
+    var target = $(this).attr('data-target');
+        $(target ).slideToggle( "slow", function() {
+        // Animation complete.
+    });
+});
+</script>
+
+<!--전체 열고 닫기-->
+<script>
+$('#all_open').click(function() {
+    for(var i=1; i<10; i++){
+    var target = "#collapse_"+i;
+    $(target).slideDown( "slow", function() {
+        // Animation complete.
+    });
+    }
+});
+$('#all_close').click(function() {
+    for(var i=1; i<10; i++){
+    var target = "#collapse_"+i;
+    $(target).slideUp( "slow", function() {
+        // Animation complete.
+    });
+    }
+});
 </script>
 
 <!--<script>-->
