@@ -171,7 +171,7 @@ $('#search_patent').click(function(){
                     var title_button = '<button id="clickme" class="btn btn-link" type="button" data-target="#collapse_'+ key + '">'
                         + value.number + '  ' + value.title + '</button>';
                     var link_button = '<button class="btn btn-secondary" type="button" style="float: right;" ' + 'onclick="' +
-                        'window.open(\'' + link_url + '\')">해당 사이트로 이동 <i class="fa fa-paper-plane" aria-hidden="true"></i></button>';
+                        'window.open(\'' + link_url + '\')">자세히 보기 <i class="fa fa-paper-plane" aria-hidden="true"></i></button>';
                     var html = '<div class="card">'
                         + '<div class="card-header">' + title_button + link_button + '</div>'
                         + '<div id="collapse_' + key + '" class="collapse" data-parent="#accordion">'
