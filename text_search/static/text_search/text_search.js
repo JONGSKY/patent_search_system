@@ -14,17 +14,7 @@ var svg = d3.select("#wordcloud_svg")
 var layout = d3.layout.cloud().size([width, height]);
 
 function createWordCloud(myWords){
-// append the svg object to the body of the page
-//     var svg = d3.select("#wordcloud").append("svg")
-//         .attr("width", width + margin.left + margin.right)
-//         .attr("height", height + margin.top + margin.bottom)
-//         .attr("id", "wordcloud_svg")
-//         .append("g")
-//         .attr("transform",
-//             "translate(" + margin.left + "," + margin.top + ")");
     $("#cloud_s").remove();
-//     var layout = d3.layout.cloud()
-//         .size([width, height])
     layout = layout.words(myWords.map(function(d) { return {text: d.word, size:d.size}; }))
         .padding(5)        //space between words
         .rotate(function() { return ~~(Math.random() * 2) * 90; })
@@ -32,7 +22,6 @@ function createWordCloud(myWords){
         .on("end", draw);
     layout.start();
 }
-
 
 function draw(words) {
     svg.append("g")
@@ -51,7 +40,9 @@ function draw(words) {
         .text(function(d) { return d.text; })
         .on("click", function(d){
             var ctr = d.text;
-            var keyword_tag = '<div class="col-xs-2 form-inline add_keyword_group"><input name="add_keyword" class="form-control keywords" style="background-color:#D9E5FF; color:#6799FF; margin:10px 5px 10px 5px" type="text" value=' + ctr +'><div class="input-group-btn div_add_keyword"><button class="btn btn-primary button_add_keyword" type="submit"><i class="fa fa-times"></i></button></div>'
+            var keyword_tag = '<div class="col-xs-2 form-inline add_keyword_group">' +
+                '<input name="add_keyword" class="form-control keywords" style="background-color:#D9E5FF; color:#6799FF; margin:10px 5px 10px 5px" type="text" value=' + ctr +'>' +
+                '<div class="input-group-btn div_add_keyword"><button class="btn btn-primary button_add_keyword" type="submit"><i class="fa fa-times"></i></button></div>'
             $('#keyword_list').append(keyword_tag);
             $("#cloud_s").remove();
 
@@ -122,14 +113,37 @@ $('#search_patent').click(function(){
             url: 'text_result',
             data: {'keyword': keywords},
             success: function (data) {
-                $('#results').html(JSON.stringify(data));
-                // alert(JSON.stringify(data));
-                // myWords = data['myWords'];
-                // createWordCloud(myWords);
+                var event_data = '<section class="page-section" id="services_result">'
+                    + '<div class="container">'
+                    + '<h2 class="text-center mt-0">Result</h2>'
+                    + '<hr class="divider my-4">'
+                    + '<div class="row">'
+                    + '<div class="panel-group" id="accordion">'
+                    + '<div>'
+                    + '<button id="all_open" class="btn btn-link" type="button"> 전체 열기 </button>'
+                    + '<button id="all_close" class="btn btn-link" type="button"> 전체 닫기 </button>'
+                    + '</div>';
+
+                $("#accordion").empty();
+                $.each(data, function(key, value) {
+                    var link_url = "http://patents.google.com/patent/" + value.country + value.number + value.kind;
+                    var title_button = '<button class="btn btn-link card-link" data-toggle="collapse" href="#collapse_' + key + '">'
+                        + value.number + '  ' + value.title + '</button>';
+                    var link_button = '<button class="btn btn-secondary" type="button" style="float: right;" ' + 'onclick="' +
+                        'window.open(\'' + link_url + '\')">해당 사이트로 이동 <i class="fa fa-paper-plane" aria-hidden="true"></i></button>';
+                    var html = '<div class="card">'
+                        + '<div class="card-header">' + title_button + link_button + '</div>'
+                        + '<div id="collapse_' + key + '" class="collapse" data-parent="#accordion">'
+                        + '<div class="card-body">'
+                        + '<div class="row"><h5>&nbsp;Date&nbsp;</h5>:&nbsp;' + value.date + '</div>'
+                        + '<div class="row"><h5>&nbsp;Country&nbsp;</h5>:&nbsp;' + value.country + '</div>'
+                        + '<div class="row"><h5>&nbsp;Abstract&nbsp; </h5>&nbsp;&nbsp;' + value.abstract + '</div>'
+                        + '</div>'
+                        + '</div>'
+                        + '</div>';
+                    $("#accordion").append(html);
+                });
             }
         })
     }
 });
-
-
-
