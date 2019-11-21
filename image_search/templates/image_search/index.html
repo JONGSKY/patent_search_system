@@ -1,45 +1,54 @@
-{% extends 'search/index.html' %}
+{% extends 'search/base.html' %}
 {% load static %}
 
-{% block search %}
+{% block javasrcipt %}
+    <script src="{% static 'image_search/image_search.js' %}"></script>
+{% endblock %}
 
-<style>
-    form {
+{% block stylesheet %}
+    <link href="{% static 'text_search/style.css' %}" rel="stylesheet">
+    <style>
+        footer {
+            position:fixed;
+            bottom:0;
+            width:100%;
+        }
+        #footer {
+            height: 115px;
+        }
+    </style>
+{% endblock %}
 
-        margin: 0 auto;
+{% block home_url %}
+    <a id='home' class="navbar-brand js-scroll-trigger" href="{% url 'home' %}">Patent Search</a>
+{% endblock %}
 
-    }
-</style>
-
-  <script src="{% static 'image_search/js/preview_image.js' %}"></script>
-
-<header id='head' class="masthead"></header>
-
-  <div class="container">
-
-    <br><br>
-
-    <div class="row text-center" style="width: 100%">
-      <form>
-        <input style="background-color: #998A81;" type="file" name="profile_pt" id="profile_pt" onchange="previewImage(this,'View_area')">
-          <center>
+{% block main_page %}
+    <section class="page-section bg-dark text-white" id="search">
         <br>
-      <div id='View_area' style='position:relative; width: 100px; height: 100px; color: black; border: 0px solid black; dispaly: inline; '></div>
-          </center>
-      </form>
-    </div>
-
-
-<!--메뉴바 정리-->
-<script>
-$(function(){
-  $('#home').attr("href", "{% url 'search' %}");
-  $("li").remove("#About, #Services, #Portfolio, #Contact");
-<!--  $("#head.masthead").css('background','linear-gradient(to bottom,rgba(92,77,66,.8) 0,rgba(92,77,66,.8) 100%),url(../img/bg-masthead.jpg)');-->
-<!--  $("#head.masthead").css('background','#746962');-->
-  $("#mainNav").css({'background':'#746962'});
-  $("#head.masthead").css({'height': 0, 'min-height':0, 'background':'#746962'});
-});
-</script>
-
+        <div class="container">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-lg-8 text-center">
+                    <h2 class="text-white mt-0">Patent Image Search</h2>
+                    <hr class="divider light my-4">
+                    <br>
+                    <div class="container text-center">
+                        <img src="" id="profile-img-tag" class="img-thumbnail" width="200px" />
+                        <br><br>
+                        <form method="POST" id="image_form" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="custom-file input-group">
+                                <input type="file" class="custom-file-input" name='image' id="profile-img">
+                                <label class="custom-file-label" id='img-label' for="customFile">Choose file</label>
+                            </div>
+                            <br><br>
+                            <button id="search_patent" type="submit" class="btn btn-primary"> 현재 이미지로 검색하기 </button>
+                        </form>
+                    </div>
+                </div>
+                {#                <button id="search_image" type="button" class="btn btn-primary"> 이미지 검색하기 </button>#}
+            </div>
+        </div>
+    </section>
+    <div id='footer'></div>
 {% endblock %}

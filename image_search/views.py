@@ -13,7 +13,7 @@ def handle_uploaded_file(f):
 
 
 def index(request):
-    return render(request, 'image_search/index_2.html')
+    return render(request, 'image_search/index.html')
 
 
 def image_upload(request):

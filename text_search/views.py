@@ -27,8 +27,11 @@ def wordcloud_search(request):
 
 def text_result(request):
     final_keyword = request.GET['keyword']
-    keyword_list = final_keyword.split()
-    data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list)))
+    keyword_list = [word.lower().strip() for word in final_keyword.split() if word!='and']
+    # 특허는 최신순서로 정렬
+    data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list))).order_by('-date')
+    # data_list = data_list[::-1][:9]
+    # data_list = data_list[9::-1]
     data_list = data_list[:9]
     data_list = list(data_list.values())
     return JsonResponse(data_list, safe=False)

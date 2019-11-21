@@ -10,6 +10,12 @@ $('#submit_keyword').click(function(){
             method: "GET",
             url: 'wordcloud',
             data: {'keyword': keywords},
+            beforeSend: function() {
+            $('html').css("cursor","wait");
+            },
+            complete: function() {
+            $('html').css("cursor","auto");
+            },
             success: function (data) {
                 myWords = data['myWords'];
                 if (myWords == ""){
@@ -141,6 +147,13 @@ $('#search_patent').click(function(){
             method: "GET",
             url: 'text_result',
             data: {'keyword': keywords},
+            beforeSend: function() {
+            $('html').css("cursor","wait");
+            },
+            complete: function() {
+            //통신이 완료된 후 처리되는 함수
+            $('html').css("cursor","auto");
+            },
             success: function (data) {
                 if (data == ""){
                     alert(' 죄송합니다. \n 해당 검색어로는 result 결과물이 없습니다! \n 다른 검색어로 검색해주세요');}
