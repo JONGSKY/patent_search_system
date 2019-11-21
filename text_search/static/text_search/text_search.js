@@ -1,7 +1,6 @@
 // // List of words
-
 var margin = {top: 10, right: 10, bottom: 10, left: 10}
-var width = 450 - margin.left - margin.right;
+var width = 568 - margin.left - margin.right;
 var height = 450 - margin.top - margin.bottom;
 var myWords;
 
@@ -40,9 +39,17 @@ function draw(words) {
         .text(function(d) { return d.text; })
         .on("click", function(d){
             var ctr = d.text;
-            var keyword_tag = '<div class="col-xs-2 form-inline add_keyword_group">' +
+            var keyword_tag = '<div class="col-xs-1 form-inline add_keyword_group">' +
                 '<input name="add_keyword" class="form-control keywords" style="background-color:#D9E5FF; color:#6799FF; margin:10px 5px 10px 5px" type="text" value=' + ctr +'>' +
-                '<div class="input-group-btn div_add_keyword"><button class="btn btn-primary button_add_keyword" type="submit"><i class="fa fa-times"></i></button></div>'
+                '<div class="input-group-append div_add_keyword"><button class="btn btn-primary button_add_keyword" type="button"><i class="fa fa-times"></i></button></div>';
+
+            var keyword_tag = '<div class="input-group form-inline col-3 add_keyword_group" style="margin-top: 5px;">\n' +
+                '    <input type="text" name="add_keyword" class="form-control keywords" value="'+ ctr + '">\n' +
+                '    <div class="input-group-append div_add_keyword">\n' +
+                '      <button class="btn btn-danger button_add_keyword" type="button"><i class="fa fa-times"></i></button>  \n' +
+                '     </div>\n' +
+                '  </div>';
+
             $('#keyword_list').append(keyword_tag);
             $("#cloud_s").remove();
 
@@ -90,6 +97,8 @@ $('#submit_keyword').click(function(){
             url: 'wordcloud_search',
             data: {'keyword': keywords},
             success: function (data) {
+                $('#result_section').css('display', 'none');
+                $('#wordcloud_section').css('display', 'block');
                 myWords = data['myWords'];
                 createWordCloud(myWords);
             }
@@ -113,6 +122,13 @@ $('#search_patent').click(function(){
             url: 'text_result',
             data: {'keyword': keywords},
             success: function (data) {
+                $('#wordcloud_section').css('display', 'none');
+                $('#result_section').css('display', 'block');
+                $('#search_keyword').val(keywords);
+                $('#keyword_list').empty();
+                $("#accordion").empty();
+                $("#cloud_s").remove();
+
                 var event_data = '<section class="page-section" id="services_result">'
                     + '<div class="container">'
                     + '<h2 class="text-center mt-0">Result</h2>'
@@ -124,7 +140,7 @@ $('#search_patent').click(function(){
                     + '<button id="all_close" class="btn btn-link" type="button"> 전체 닫기 </button>'
                     + '</div>';
 
-                $("#accordion").empty();
+
                 $.each(data, function(key, value) {
                     var link_url = "http://patents.google.com/patent/" + value.country + value.number + value.kind;
                     var title_button = '<button class="btn btn-link card-link" data-toggle="collapse" href="#collapse_' + key + '">'

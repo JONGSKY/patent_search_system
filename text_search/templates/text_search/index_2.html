@@ -7,6 +7,16 @@
 
 {% block stylesheet %}
     <link href="{% static 'text_search/style.css' %}" rel="stylesheet">
+    <style>
+        footer {
+            position:fixed;
+            bottom:0;
+            width:100%;
+        }
+        #footer {
+            height: 115px;
+        }
+    </style>
 {% endblock %}
 
 {% block home_url %}
@@ -38,20 +48,20 @@
             </div>
         </div>
     </section>
-    <section class="page-section" id="services">
-        <div class="container">
-            <h2 class="text-center mt-0">Word Cloud</h2>
-            <hr class="divider my-4">
-            <div class="row">
-                <div id="wordcloud" class="col-lg-3 col-md-6 text-center">
-                    <svg id="wordcloud_svg"></svg>
-                </div>
-            </div>
 
+    <section class="page-section" id="wordcloud_section" style="display: none;">
+        <div class="container">
+            <h2 class="text-center mt-0">WordCloud</h2>
+            <hr class="divider my-4">
+            <div class="col-sm-1 col-md-2"></div>
+            <div id="wordcloud" class="container col-sm-9, col-md-8">
+                <svg id="wordcloud_svg"></svg>
+            </div>
+            <div class="col-sm-1 col-md-2"></div>
         </div>
     </section>
 
-    <section class="page-section" id="patent_results">
+    <section class="page-section" id="result_section" style="display: none;">
         <div class="container">
             <h2 class="text-center mt-0">Results</h2>
             <hr class="divider my-4">
@@ -61,4 +71,6 @@
             </div>
         </div>
     </section>
+
+    <div id='footer'></div>
 {% endblock %}
