@@ -1,80 +1,110 @@
-{% extends 'search/index.html' %}
+{% extends 'search/base.html' %}
 {% load static %}
 
-{% block search %}
+{% block javasrcipt %}
+<script src="{% static 'text_search/text_search.js' %}"></script>
+{% endblock %}
 
+{% block stylesheet %}
+<link href="{% static 'text_search/style.css' %}" rel="stylesheet">
 <style>
-    form {
+        footer {
+            position:fixed;
+            bottom:0;
+            width:100%;
+        }
+        #footer {
+            height: 115px;
+        }
 
-        margin: 0 auto;
 
-    }
+
+
 </style>
+{% endblock %}
 
-<header id='head' class="masthead"></header>
+{% block home_url %}
+<a id='home' class="navbar-brand js-scroll-trigger" href="{% url 'home' %}">Patent Search</a>
+{% endblock %}
 
-    <div class="container">
-
-      <br><br>
-    <div class="row text-center" style="width: 100%">
-      <form id='submit_page_1' class="form-inline mr-auto" action="{% url 'text_search_1' %}" method="get">
-        <input class="form-control mr-sm-2 text-center"  name="keyword" id="search_keyword" type="text"
-                placeholder="검색하고 싶은 키워드를 입력해주세요" style="width:500px" aria-label="Search">
-        <button id="button_submit" class="btn btn-outline-success btn-rounded btn-sm my-0" type="submit">Wordcloud<i class="fa fa-search"></i></button>
-      </form>
-    </div>
-
-
+{% block main_page %}
+<section class="page-section bg-dark text-white" id="search">
     <br>
-
-
-    <div class="row text-center" style="width: 100%">
-      <form id='submit_page_2' action="{% url 'text_search_2' %}" method="get">
-        <input tpye="text" name="final_keyword" id="final_search_keyword"  value="" style="display:none;"/>
-        <button id="final_search_button" type="submit" class="btn btn-primary"> 현재 키워드들로 검색하기 </button>
-      </form>
+    <div class="container">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="text-white mt-0">Patent Text Search</h2>
+                <hr class="divider light my-4">
+                <br>
+                <div class="row text-center">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control text-center" placeholder="검색하고 싶은 키워드를 입력해주세요"
+                               aria-label="search_keyword" id="search_keyword" aria-describedby="basic-addon2">
+                        <div class="input-group-append">
+                            <button id="submit_keyword" class="btn btn-outline-secondary" type="button"> WordCloud <i
+                                    class="fa fa-search" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div id="keyword_list" class="form-inline form-group row text-center"></div>
+                <div class="container">
+                    <button id="search_patent" type="button" class="btn btn-primary"> 현재 키워드들로 검색하기</button>
+                </div>
+            </div>
+        </div>
     </div>
+</section>
 
+<section class="page-section" id="wordcloud_section" style="display: none;">
+    <div class="container">
+        <h2 class="text-center mt-0">WordCloud</h2>
+        <hr class="divider my-4">
+        <div class="col-sm-1 col-md-2"></div>
+        <div id="wordcloud" class="container col-sm-9, col-md-8">
+            <svg id="wordcloud_svg"></svg>
+        </div>
+        <div class="col-sm-1 col-md-2"></div>
     </div>
+</section>
 
-<!--메뉴바 정리-->
-<script>
-$(function(){
-  $('#home').attr("href", "{% url 'home' %}");
-  $("li").remove("#About, #Services, #Portfolio, #Contact");
-<!--  $("#head.masthead").css('background','linear-gradient(to bottom,rgba(92,77,66,.8) 0,rgba(92,77,66,.8) 100%),url(../img/bg-masthead.jpg)');-->
-<!--  $("#head.masthead").css('background','#746962');-->
-  $("#mainNav").css({'background':'#746962'});
-  $("#head.masthead").css({'height': 0, 'min-height':0, 'background':'#746962'});
-});
-</script>
+<section class="page-section" id="result_section" style="display: none;">
+    <div class="container">
+        <h2 class="text-center mt-0">Results</h2>
+        <hr class="divider my-4">
+        <div id="results" class="container">
+            <div>
+                <button id="all_open" class="btn btn-link" type="button"> 전체 열기</button>
+                <button id="all_close" class="btn btn-link" type="button"> 전체 닫기</button>
+            </div>
+            <div id="accordion">
+            </div>
+        </div>
+    </div>
+</section>
 
-<!--검색 키워드 최종 키워드로 바꾸기 -->
-<script>
-$(function(){
-    $('#final_search_button').click(function(){
-        var final_keyword = $('#search_keyword').val();
-        $('#final_search_keyword').val(final_keyword);
-    });
-});
-</script>
+<section class="page-section" id="result_pagination" style="display: none;">
+    <div class="container">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center">
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Previous</span>
+              </a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Next</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+    </div>
+</section>
 
-<!--검색 키워드 없을 때 -->
-<script>
-$('#final_search_button').click(function(){
-    var search_keyword = $('#search_keyword').val().trim();
-    if (search_keyword == ""){
-        alert('검색어를 입력 후 검색해주세요!');
-        $("#submit_page_2").attr("action", "{% url 'text_search' %}");}
-    else {}
-    });
-$('#button_submit').click(function(){
-    var search_keyword = $('#search_keyword').val().trim();
-    if (search_keyword == ""){
-        alert('검색어를 입력 후 검색해주세요!');
-        $("#submit_page_1").attr("action", "{% url 'text_search' %}");}
-    else {}
-    });
-</script>
-
+<div id='footer'></div>
 {% endblock %}

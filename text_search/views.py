@@ -1,26 +1,21 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from gensim.models import KeyedVectors
+from gensim.models.word2vec import Word2Vec
 from text_search.models import Patent
 from django.db.models import Q
 
 from functools import reduce
 import operator
 
-model = KeyedVectors.load('glove_word2vec_format.model')
+model = Word2Vec.load('word2vec.model')
 
 def index(request):
-    context = {
-    }
-    return render(request, 'text_search/index.html', context)
-
-def index_2(request):
-    return render(request, 'text_search/index_2.html')
+    return render(request, 'text_search/index.html')
 
 
 def wordcloud_search(request):
     search_keyword = request.GET['keyword']
-    list_search_keyword = [word.lower().strip() for word in search_keyword.split()]
+    list_search_keyword = [word.lower().strip() for word in search_keyword.split() if word!='and']
     try:
         similar_words = model.wv.most_similar(list_search_keyword, topn=30)
         similar_words = [{'word': w, 'size': 60 - (i * 1.5)} for i, (w, _) in enumerate(similar_words)]

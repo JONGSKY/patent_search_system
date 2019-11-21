@@ -7,5 +7,4 @@
 database.json
 
 # word embedding model
-glove_word2vec_format.model.vectors.npy
-glove_word2vec_format.model
+word2vec.model

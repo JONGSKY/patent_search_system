@@ -10,4 +10,4 @@ from django.http import HttpResponse
 def index(request):
     context = {
     }
-    return render(request, 'search/index_2.html', context)
+    return render(request, 'search/index.html', context)

@@ -1,17 +1,43 @@
-// // List of words
+// 워드클라우드
+
+// 워드클라우드 검색어로 생성하기
+$('#submit_keyword').click(function(){
+    var keywords = $('#search_keyword').val().trim();
+    if (keywords === ""){
+        alert('검색어를 입력 후 검색해주세요!');
+    } else {
+        $.ajax({
+            method: "GET",
+            url: 'wordcloud',
+            data: {'keyword': keywords},
+            success: function (data) {
+                myWords = data['myWords'];
+                if (myWords == ""){
+                    alert(' 죄송합니다. \n 해당 검색어로는 wordcloud 제작이 어렵습니다! \n 다른 검색어로 검색해주세요');}
+                    else {
+                    $('#result_section').css('display', 'none');
+                    $('#result_pagination').css('display', 'none');
+                    $('#wordcloud_section').css('display', 'block');
+                    createWordCloud(myWords);
+                    }
+            }
+        })
+    }
+});
+
+// 워드클라우드 변수 지정
 var margin = {top: 10, right: 10, bottom: 10, left: 10}
 var width = 568 - margin.left - margin.right;
 var height = 450 - margin.top - margin.bottom;
 var myWords;
-
 var svg = d3.select("#wordcloud_svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
 var layout = d3.layout.cloud().size([width, height]);
 
+// 워드클라우드 생성 함수
 function createWordCloud(myWords){
     $("#cloud_s").remove();
     layout = layout.words(myWords.map(function(d) { return {text: d.word, size:d.size}; }))
@@ -22,6 +48,7 @@ function createWordCloud(myWords){
     layout.start();
 }
 
+// 워드클라우드 그리기 힘수
 function draw(words) {
     svg.append("g")
         .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
@@ -69,6 +96,7 @@ function draw(words) {
     ;
 }
 
+// 추가 키워드 제거 후 워드클라우드 재생성
 $('body').on("click", ".div_add_keyword", function(){
     $(this).parent("div").remove();
 
@@ -87,25 +115,17 @@ $('body').on("click", ".div_add_keyword", function(){
 });
 
 
-$('#submit_keyword').click(function(){
-    var keywords = $('#search_keyword').val().trim();
-    if (keywords === ""){
-        alert('검색어를 입력 후 검색해주세요!');
-    } else {
-        $.ajax({
-            method: "GET",
-            url: 'wordcloud_search',
-            data: {'keyword': keywords},
-            success: function (data) {
-                $('#result_section').css('display', 'none');
-                $('#wordcloud_section').css('display', 'block');
-                myWords = data['myWords'];
-                createWordCloud(myWords);
-            }
-        })
-    }
-});
 
+
+
+
+
+
+
+
+// 검색결과
+
+// 키워드 + 추가키워드로 검색결과 확인하기
 $('#search_patent').click(function(){
     var keywords = $('#search_keyword').val().trim();
     $("input[name=add_keyword]").each(function(idx){
@@ -122,27 +142,20 @@ $('#search_patent').click(function(){
             url: 'text_result',
             data: {'keyword': keywords},
             success: function (data) {
+                if (data == ""){
+                    alert(' 죄송합니다. \n 해당 검색어로는 result 결과물이 없습니다! \n 다른 검색어로 검색해주세요');}
+                    else {
                 $('#wordcloud_section').css('display', 'none');
                 $('#result_section').css('display', 'block');
+                $('#result_pagination').css('display', 'block');
                 $('#search_keyword').val(keywords);
                 $('#keyword_list').empty();
                 $("#accordion").empty();
                 $("#cloud_s").remove();
 
-//                var event_data = '<section class="page-section" id="services_result">'
-//                    + '<div class="container">'
-//                    + '<h2 class="text-center mt-0">Result</h2>'
-//                    + '<hr class="divider my-4">'
-//                    + '<div class="row">'
-//                    + '<div class="panel-group" id="accordion">'
-//                    + '<div>'
-//                    + '<button id="all_open" class="btn btn-link" type="button"> 전체 열기 </button>'
-//                    + '<button id="all_close" class="btn btn-link" type="button"> 전체 닫기 </button>'
-//                    + '</div>';
-
                 $.each(data, function(key, value) {
                     var link_url = "http://patents.google.com/patent/" + value.country + value.number + value.kind;
-                    var title_button = '<button class="btn btn-link card-link" data-toggle="collapse" href="#collapse_'+ key + '">'
+                    var title_button = '<button id="clickme" class="btn btn-link" type="button" data-target="#collapse_'+ key + '">'
                         + value.number + '  ' + value.title + '</button>';
                     var link_button = '<button class="btn btn-secondary" type="button" style="float: right;" ' + 'onclick="' +
                         'window.open(\'' + link_url + '\')">해당 사이트로 이동 <i class="fa fa-paper-plane" aria-hidden="true"></i></button>';
@@ -159,31 +172,33 @@ $('#search_patent').click(function(){
                     $("#accordion").append(html);
                 });
             }
+          }
         })
     }
 });
 
-// 클릭시 toggle 내려오기
+// 버튼 클릭시 자세하게 볼 수 있게 열리기
 $(document).on("click", "button", function(){
     var target = $(this).attr('data-target');
         $(target ).slideToggle( "slow", function() {
-        // Animation complete.
     });
 });
 
-// 전체 열고 닫기
+// 전체 열기
 $(document).on("click", "#all_open", function(){
     for(var i=0; i<9; i++){
     var target = "#collapse_"+i;
-    $(target).slideDown( "slow", function() {
+    $(target).slideDown("slow", function() {
         // Animation complete.
     });
     }
 });
+
+// 전체 닫기
 $(document).on("click", "#all_close", function(){
     for(var i=0; i<9; i++){
     var target = "#collapse_"+i;
-    $(target).slideUp( "slow", function() {
+    $(target).slideUp("slow", function() {
         // Animation complete.
     });
     }
