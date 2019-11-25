@@ -123,12 +123,6 @@ $('body').on("click", ".div_add_keyword", function(){
 
 
 
-
-
-
-
-
-
 // 검색결과
 
 // 키워드 + 추가키워드로 검색결과 확인하기
@@ -148,16 +142,18 @@ $('#search_patent').click(function(){
             url: 'text_result',
             data: {'keyword': keywords},
             beforeSend: function() {
-            $('html').css("cursor","wait");
+                $('html').css("cursor","wait");
+                $('#keyword_list').css('display', 'none');
             },
             complete: function() {
             //통신이 완료된 후 처리되는 함수
-            $('html').css("cursor","auto");
+                $('#keyword_list').css('display', '');
+                $('html').css("cursor","auto");
             },
             success: function (data) {
                 if (data == ""){
                     alert(' 죄송합니다. \n 해당 검색어로는 result 결과물이 없습니다! \n 다른 검색어로 검색해주세요');}
-                    else {
+                else {
                 $('#wordcloud_section').css('display', 'none');
                 $('#result_section').css('display', 'block');
                 $('#result_pagination').css('display', 'block');
@@ -166,53 +162,121 @@ $('#search_patent').click(function(){
                 $("#accordion").empty();
                 $("#cloud_s").remove();
 
-                $.each(data, function(key, value) {
-                    var link_url = "http://patents.google.com/patent/" + value.country + value.number + value.kind;
-                    var title_button = '<button id="clickme" class="btn btn-link" type="button" data-target="#collapse_'+ key + '">'
-                        + value.number + '  ' + value.title + '</button>';
-                    var link_button = '<button class="btn btn-secondary" type="button" style="float: right;" ' + 'onclick="' +
-                        'window.open(\'' + link_url + '\')">자세히 보기 <i class="fa fa-paper-plane" aria-hidden="true"></i></button>';
-                    var html = '<div class="card">'
-                        + '<div class="card-header">' + title_button + link_button + '</div>'
-                        + '<div id="collapse_' + key + '" class="collapse" data-parent="#accordion">'
-                        + '<div class="card-body">'
-                        + '<div class="row"><h5>&nbsp;Date&nbsp;</h5>:&nbsp;' + value.date + '</div>'
-                        + '<div class="row"><h5>&nbsp;Country&nbsp;</h5>:&nbsp;' + value.country + '</div>'
-                        + '<div class="row"><h5>&nbsp;Abstract&nbsp; </h5>&nbsp;&nbsp;' + value.abstract + '</div>'
-                        + '</div>'
-                        + '</div>'
-                        + '</div>';
-                    $("#accordion").append(html);
-                });
+                $('#result_table').DataTable( {
+                    data: data,
+                    columns: [
+                        { data: 'patent_id' },
+                        { data: 'title' },
+                        { data: 'country' },
+                        { data: 'date' },
+                        { data: "country",
+                            "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                            $(nTd).html("<a target='_blank' href='http://patents.google.com/patent/"+oData.country+oData.number+oData.kind+"'>Info</a>");
+                            }
+                            },
+//                        {
+//                        "data": null,
+//                        "defaultContent": "<a href='http://patents.google.com/patent/'+'country' + 'number' + 'kind''>Info</a>"
+//                    }
+                    ]
+                    } );
+
             }
           }
         })
     }
 });
 
-// 버튼 클릭시 자세하게 볼 수 있게 열리기
-$(document).on("click", "button", function(){
-    var target = $(this).attr('data-target');
-        $(target ).slideToggle( "slow", function() {
-    });
-});
 
-// 전체 열기
-$(document).on("click", "#all_open", function(){
-    for(var i=0; i<9; i++){
-    var target = "#collapse_"+i;
-    $(target).slideDown("slow", function() {
-        // Animation complete.
-    });
-    }
-});
 
-// 전체 닫기
-$(document).on("click", "#all_close", function(){
-    for(var i=0; i<9; i++){
-    var target = "#collapse_"+i;
-    $(target).slideUp("slow", function() {
-        // Animation complete.
-    });
-    }
-});
+
+
+//// 검색결과
+//
+//// 키워드 + 추가키워드로 검색결과 확인하기
+//$('#search_patent').click(function(){
+//    var keywords = $('#search_keyword').val().trim();
+//    $("input[name=add_keyword]").each(function(idx){
+//        var add_keyword = $("input[name=add_keyword]:eq(" + idx + ")").val().trim();
+//        if(add_keyword !== ""){
+//            keywords = keywords + " " + add_keyword;
+//        }
+//    });
+//    if (keywords === ""){
+//        alert('검색어를 입력 후 검색해주세요!');
+//    } else {
+//        $.ajax({
+//            method: "GET",
+//            url: 'text_result',
+//            data: {'keyword': keywords},
+//            beforeSend: function() {
+//                $('html').css("cursor","wait");
+//                $('#keyword_list').css('display', 'none');
+//            },
+//            complete: function() {
+//            //통신이 완료된 후 처리되는 함수
+//                $('#keyword_list').css('display', '');
+//                $('html').css("cursor","auto");
+//            },
+//            success: function (data) {
+//                if (data == ""){
+//                    alert(' 죄송합니다. \n 해당 검색어로는 result 결과물이 없습니다! \n 다른 검색어로 검색해주세요');}
+//                else {
+//                $('#wordcloud_section').css('display', 'none');
+//                $('#result_section').css('display', 'block');
+//                $('#result_pagination').css('display', 'block');
+//                $('#search_keyword').val(keywords);
+//                $('#keyword_list').empty();
+//                $("#accordion").empty();
+//                $("#cloud_s").remove();
+//
+//                $.each(data, function(key, value) {
+//                    var link_url = "http://patents.google.com/patent/" + value.country + value.number + value.kind;
+//                    var title_button = '<button id="clickme" class="btn btn-link" type="button" data-target="#collapse_'+ key + '">'
+//                        + value.number + '  ' + value.title + '</button>';
+//                    var link_button = '<button class="btn btn-secondary" type="button" style="float: right;" ' + 'onclick="' +
+//                        'window.open(\'' + link_url + '\')">자세히 보기 <i class="fa fa-paper-plane" aria-hidden="true"></i></button>';
+//                    var html = '<div class="card">'
+//                        + '<div class="card-header">' + title_button + link_button + '</div>'
+//                        + '<div id="collapse_' + key + '" class="collapse" data-parent="#accordion">'
+//                        + '<div class="card-body">'
+//                        + '<div class="row"><h5>&nbsp;Date&nbsp;</h5>:&nbsp;' + value.date + '</div>'
+//                        + '<div class="row"><h5>&nbsp;Country&nbsp;</h5>:&nbsp;' + value.country + '</div>'
+//                        + '<div class="row"><h5>&nbsp;Abstract&nbsp; </h5>&nbsp;&nbsp;' + value.abstract + '</div>'
+//                        + '</div>'
+//                        + '</div>'
+//                        + '</div>';
+//                    $("#accordion").append(html);
+//                });
+//            }
+//          }
+//        })
+//    }
+//});
+//
+//// 버튼 클릭시 자세하게 볼 수 있게 열리기
+//$(document).on("click", "button", function(){
+//    var target = $(this).attr('data-target');
+//        $(target ).slideToggle( "slow", function() {
+//    });
+//});
+//
+//// 전체 열기
+//$(document).on("click", "#all_open", function(){
+//    for(var i=0; i<9; i++){
+//    var target = "#collapse_"+i;
+//    $(target).slideDown("slow", function() {
+//        // Animation complete.
+//    });
+//    }
+//});
+//
+//// 전체 닫기
+//$(document).on("click", "#all_close", function(){
+//    for(var i=0; i<9; i++){
+//    var target = "#collapse_"+i;
+//    $(target).slideUp("slow", function() {
+//        // Animation complete.
+//    });
+//    }
+//});

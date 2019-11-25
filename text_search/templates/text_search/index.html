@@ -3,10 +3,16 @@
 
 {% block javasrcipt %}
 <script src="{% static 'text_search/text_search.js' %}"></script>
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+
 {% endblock %}
 
 {% block stylesheet %}
 <link href="{% static 'text_search/style.css' %}" rel="stylesheet">
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+
 <style>
         footer {
             position:fixed;
@@ -67,43 +73,72 @@
     </div>
 </section>
 
+<!--<section class="page-section" id="result_section" style="display: none;">-->
+<!--    <div class="container">-->
+<!--        <h2 class="text-center mt-0">Results</h2>-->
+<!--        <hr class="divider my-4">-->
+<!--        <div id="results" class="container">-->
+<!--            <div>-->
+<!--                <button id="all_open" class="btn btn-link" type="button"> 전체 열기</button>-->
+<!--                <button id="all_close" class="btn btn-link" type="button"> 전체 닫기</button>-->
+<!--            </div>-->
+<!--            <div id="accordion">-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</section>-->
+
+<!--<section id="result_pagination" style="display: none;">-->
+<!--    <div class="container">-->
+<!--        <nav aria-label="Page navigation example">-->
+<!--          <ul class="pagination justify-content-center">-->
+<!--            <li class="page-item">-->
+<!--              <a class="page-link" href="#" aria-label="Previous">-->
+<!--                <span aria-hidden="true">&laquo;</span>-->
+<!--                <span class="sr-only">Previous</span>-->
+<!--              </a>-->
+<!--            </li>-->
+<!--            <li class="page-item"><a class="page-link" href="#">1</a></li>-->
+<!--            <li class="page-item"><a class="page-link" href="#">2</a></li>-->
+<!--            <li class="page-item"><a class="page-link" href="#">3</a></li>-->
+<!--            <li class="page-item">-->
+<!--              <a class="page-link" href="#" aria-label="Next">-->
+<!--                <span aria-hidden="true">&raquo;</span>-->
+<!--                <span class="sr-only">Next</span>-->
+<!--              </a>-->
+<!--            </li>-->
+<!--          </ul>-->
+<!--        </nav>-->
+<!--    </div>-->
+<!--</section>-->
+
 <section class="page-section" id="result_section" style="display: none;">
     <div class="container">
         <h2 class="text-center mt-0">Results</h2>
         <hr class="divider my-4">
-        <div id="results" class="container">
-            <div>
-                <button id="all_open" class="btn btn-link" type="button"> 전체 열기</button>
-                <button id="all_close" class="btn btn-link" type="button"> 전체 닫기</button>
-            </div>
-            <div id="accordion">
-            </div>
-        </div>
-    </div>
-</section>
 
-<section id="result_pagination" style="display: none;">
-    <div class="container">
-        <nav aria-label="Page navigation example">
-          <ul class="pagination justify-content-center">
-            <li class="page-item">
-              <a class="page-link" href="#" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-                <span class="sr-only">Previous</span>
-              </a>
-            </li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item">
-              <a class="page-link" href="#" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-                <span class="sr-only">Next</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-    </div>
+        <table id="result_table" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>patent_id</th>
+                <th>title</th>
+                <th>country</th>
+                <th>date</th>
+                <th>site</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>patent_id</th>
+                <th>title</th>
+                <th>country</th>
+                <th>date</th>
+                <th>site</th>
+            </tr>
+        </tfoot>
+    </table>
+
+            </div>
 </section>
 
 <div id='footer'></div>

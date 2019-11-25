@@ -7,6 +7,8 @@ from django.db.models import Q
 from functools import reduce
 import operator
 
+from datetime import datetime
+
 model = Word2Vec.load('word2vec.model')
 
 def index(request):
@@ -24,14 +26,22 @@ def wordcloud_search(request):
     context = {"myWords": similar_words}
     return JsonResponse(context)
 
-
 def text_result(request):
     final_keyword = request.GET['keyword']
     keyword_list = [word.lower().strip() for word in final_keyword.split() if word!='and']
     # 특허는 최신순서로 정렬
+    time_1 = datetime.now()
+    print(time_1)
     data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list))).order_by('-date')
     # data_list = data_list[::-1][:9]
     # data_list = data_list[9::-1]
-    data_list = data_list[:9]
+    time = datetime.now()
+    print(time-time_1)
+    data_list = data_list[:1000]
+    time = datetime.now()
+    print(time-time_1)
     data_list = list(data_list.values())
+    time = datetime.now()
+    print(time-time_1)
+    # print(data_list)
     return JsonResponse(data_list, safe=False)
