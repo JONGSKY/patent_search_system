@@ -123,7 +123,18 @@ $('body').on("click", ".div_add_keyword", function(){
 
 
 
-// 검색결과
+
+
+
+
+
+
+//// 검색결과
+
+function format ( d ) {
+    return '<h5>Abstract</h5>'+d.abstract+'<br>';
+//        '<h5 style="display: inline;">Title</h5>: '+d.title+'<br>'+
+}
 
 // 키워드 + 추가키워드로 검색결과 확인하기
 $('#search_patent').click(function(){
@@ -162,9 +173,15 @@ $('#search_patent').click(function(){
                 $("#accordion").empty();
                 $("#cloud_s").remove();
 
-                $('#result_table').DataTable( {
+                var dt = $('#result_table').DataTable( {
                     data: data,
                     columns: [
+                                {
+                "class":          "details-control",
+                "orderable":      false,
+                "data":           null,
+                "defaultContent": ""
+            },
                         { data: 'patent_id' },
                         { data: 'title' },
                         { data: 'country' },
@@ -174,18 +191,132 @@ $('#search_patent').click(function(){
                             $(nTd).html("<a target='_blank' href='http://patents.google.com/patent/"+oData.country+oData.number+oData.kind+"'>Info</a>");
                             }
                             },
-//                        {
-//                        "data": null,
-//                        "defaultContent": "<a href='http://patents.google.com/patent/'+'country' + 'number' + 'kind''>Info</a>"
-//                    }
-                    ]
-                    } );
+                    ],
+        "order": [[1, 'asc']]
+    }
+                     );
+                       // Array to track the ids of the details displayed rows
+    var detailRows = [];
+    $('#result_table tbody').on( 'click', 'tr td.details-control', function () {
+        var tr = $(this).closest('tr');
+        var row = dt.row( tr );
+        var idx = $.inArray( tr.attr('id'), detailRows );
+
+        if ( row.child.isShown() ) {
+            tr.removeClass( 'details' );
+            row.child.hide();
+
+            // Remove from the 'open' array
+            detailRows.splice( idx, 1 );
+        }
+        else {
+            tr.addClass( 'details' );
+            row.child( format( row.data() ) ).show();
+
+            // Add to the 'open' array
+            if ( idx === -1 ) {
+                detailRows.push( tr.attr('id') );
+            }
+        }
+    } );
+
+    // On each draw, loop over the `detailRows` array and show any child rows
+    dt.on( 'draw', function () {
+        $.each( detailRows, function ( i, id ) {
+            $('#'+id+' td.details-control').trigger( 'click' );
+        } );
+    } );
+
+
+
+$(document).ready(function () {
+
+        /* Column별 검색기능 추가 */
+    $('#result_table_filter').prepend('<select id="select"></select>');
+    $('#result_table > thead > tr').children().each(function (indexInArray, valueOfElement) {
+        if (indexInArray == 0 | indexInArray == 5){}
+        else {
+        $('#select').append('<option>'+valueOfElement.innerHTML+'</option>');}
+    });
+
+    $('.dataTables_filter input').unbind().bind('keyup', function () {
+        var colIndex = document.querySelector('#select').selectedIndex+1;
+        dt.column(colIndex).search(this.value).draw();
+    });
+
+});
 
             }
           }
         })
     }
 });
+
+
+
+
+
+
+
+//// 검색결과
+//
+//// 키워드 + 추가키워드로 검색결과 확인하기
+//$('#search_patent').click(function(){
+//    var keywords = $('#search_keyword').val().trim();
+//    $("input[name=add_keyword]").each(function(idx){
+//        var add_keyword = $("input[name=add_keyword]:eq(" + idx + ")").val().trim();
+//        if(add_keyword !== ""){
+//            keywords = keywords + " " + add_keyword;
+//        }
+//    });
+//    if (keywords === ""){
+//        alert('검색어를 입력 후 검색해주세요!');
+//    } else {
+//        $.ajax({
+//            method: "GET",
+//            url: 'text_result',
+//            data: {'keyword': keywords},
+//            beforeSend: function() {
+//                $('html').css("cursor","wait");
+//                $('#keyword_list').css('display', 'none');
+//            },
+//            complete: function() {
+//            //통신이 완료된 후 처리되는 함수
+//                $('#keyword_list').css('display', '');
+//                $('html').css("cursor","auto");
+//            },
+//            success: function (data) {
+//                if (data == ""){
+//                    alert(' 죄송합니다. \n 해당 검색어로는 result 결과물이 없습니다! \n 다른 검색어로 검색해주세요');}
+//                else {
+//                $('#wordcloud_section').css('display', 'none');
+//                $('#result_section').css('display', 'block');
+//                $('#result_pagination').css('display', 'block');
+//                $('#search_keyword').val(keywords);
+//                $('#keyword_list').empty();
+//                $("#accordion").empty();
+//                $("#cloud_s").remove();
+//
+//                $('#result_table').DataTable( {
+//                    data: data,
+//                    columns: [
+//                        { data: 'patent_id' },
+//                        { data: 'title' },
+//                        { data: 'country' },
+//                        { data: 'date' },
+//                        { data: "country",
+//                            "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+//                            $(nTd).html("<a target='_blank' href='http://patents.google.com/patent/"+oData.country+oData.number+oData.kind+"'>Info</a>");
+//                            }
+//                            },
+//                    ]
+//                    } );
+//
+//            }
+//          }
+//        })
+//    }
+//});
 
 
 

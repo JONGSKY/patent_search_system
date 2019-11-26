@@ -8,6 +8,8 @@ from functools import reduce
 import operator
 
 from datetime import datetime
+# import random
+
 
 model = Word2Vec.load('word2vec.model')
 
@@ -37,7 +39,10 @@ def text_result(request):
     # data_list = data_list[9::-1]
     time = datetime.now()
     print(time-time_1)
-    data_list = data_list[:1000]
+    # random.shuffle(data_list)
+    # time = datetime.now()
+    # print(time - time_1)
+    # data_list = data_list[:1000]
     time = datetime.now()
     print(time-time_1)
     data_list = list(data_list.values())

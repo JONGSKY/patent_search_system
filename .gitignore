@@ -8,3 +8,5 @@ database.json
 
 # word embedding model
 word2vec.model
+
+# search_image_data
