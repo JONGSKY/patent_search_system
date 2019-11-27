@@ -40,8 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'search',
-    'backend_1',
-    'backend_2',
     'image_search',
     'text_search',
 
