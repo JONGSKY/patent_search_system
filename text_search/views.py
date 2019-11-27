@@ -43,8 +43,8 @@ def text_result(request):
     # time = datetime.now()
     # print(time - time_1)
     # data_list = data_list[:1000]
-    time = datetime.now()
-    print(time-time_1)
+    # time = datetime.now()
+    # print(time-time_1)
     data_list = list(data_list.values())
     time = datetime.now()
     print(time-time_1)
