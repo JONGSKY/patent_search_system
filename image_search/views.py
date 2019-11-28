@@ -25,9 +25,9 @@ def image_upload(request):
         filename = handle_uploaded_file(request.FILES['image'])
         embd = get_embedding.get_embedding(filename)
         image_files = np.load('image_files.npy')
-        total_embedding = np.load('embeddings.npy').reshape(-1, 256)
+        total_embedding = np.load('embeddings.npy')
         distance_matrix = cosine_similarity(embd, total_embedding)
-        result = image_files[np.argsort(distance_matrix).reshape(-1)[-5:]]
+        result = image_files[np.argsort(distance_matrix).reshape(-1)]
         os.remove(filename)
         patent_list = list()
         idx = -1
@@ -35,5 +35,7 @@ def image_upload(request):
             p_id = result[idx].split('-')[0][2:]
             if p_id not in patent_list:
                 patent_list.append(p_id)
+            idx -= 1
+        patent_list = patent_list[::-1]
         patent_info = list(Patent.objects.filter(patent_id__in=patent_list).values('patent_id', 'title', 'abstract'))
     return JsonResponse(patent_info, safe=False)
