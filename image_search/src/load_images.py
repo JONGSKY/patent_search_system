@@ -2,22 +2,24 @@ import os, sys, pickle
 import numpy as np
 import cv2
 from time import time
-from tqdm import tqdm
-from multiprocessing import Process
+
+
 def readImg(img_file, image_shape = (64, 64)):
     im = cv2.imread(img_file, cv2.IMREAD_GRAYSCALE)
     im = cv2.resize(im, image_shape, cv2.INTER_AREA)
     im = im.reshape((1,)+image_shape+(1,))
     return im / 255.
 
+
 def read_patent_id_dict(path='patent_three_digit.pkl') :
     with open(path, 'rb') as f:
         patent_dict = pickle.load(f)
     return patent_dict
 
+
 def load_image(path, n_process, image_shape = (64, 64)) :
     def readImg(image_files, image_shape = (64, 64)):
-        for sample, img_file in tqdm(enumerate(image_files)):
+        for sample, img_file in enumerate(image_files):
             file_path = os.path.join(path, img_file)
             im = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
             im = cv2.resize(im, image_shape, cv2.INTER_AREA)
@@ -37,7 +39,8 @@ def load_image(path, n_process, image_shape = (64, 64)) :
     print('끝난 시간 : ', end_time - present_time)
     return result, labels
 
-class Dataset :
+
+class Dataset:
     def __init__(self, dataset, batch_size=32, shuffle=True) :
         self.dataset = dataset
         self.batch_size = batch_size
@@ -59,7 +62,7 @@ class Dataset :
         self.idx += 1
         return batch, epoch
 
-    def initialize(self) :
+    def initialize(self):
         self.shuffle_dataset()
         self.idx = 0
 
