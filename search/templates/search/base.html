@@ -16,7 +16,20 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>
-
+    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800,900&display=swap" rel="stylesheet">
+    <style>
+    body{
+      font-family: 'Nunito', sans-serif;
+    }
+    h1,h2,h3,h4,h5{
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+    }
+    p,a,div{
+      font-family: 'Nunito', sans-serif;
+      font-weight: 300;
+    }
+    </style>
     <!-- Theme CSS - Includes Bootstrap -->
     <link href="{% static 'search/css/creative.min.css' %}" rel="stylesheet">
     <link href="{% static 'search/vendor/magnific-popup/magnific-popup.css' %}" rel="stylesheet">
@@ -43,7 +56,7 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav">
     <div class="container">
         {% block home_url %}
-            <a id='home' class="navbar-brand js-scroll-trigger" href="#page-top">Patent Search</a>
+            <a id='home' class="navbar-brand js-scroll-trigger" href="#page-top">LaSPAM - Patent Search</a>
         {% endblock %}
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -53,10 +66,10 @@
                 {% block index_navbar %}
                 {% endblock %}
                 <li id="search_text" class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="{% url 'text_search' %}">텍스트 검색</a>
+                    <a class="nav-link js-scroll-trigger" href="{% url 'text_search' %}">text search</a>
                 </li>
                 <li id="search_image" class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="{% url 'image_search' %}">이미지 검색</a>
+                    <a class="nav-link js-scroll-trigger" href="{% url 'image_search' %}">image search</a>
                 </li>
             </ul>
         </div>
@@ -68,7 +81,7 @@
 
 <footer class="bg-light py-5">
     <div class="container">
-        <div class="small text-center text-muted">Copyright &copy; 2019 - Start Bootstrap</div>
+        <div class="small text-center text-muted">Copyright &copy; 2019 - LaSPAM</div>
     </div>
 </footer>
 
