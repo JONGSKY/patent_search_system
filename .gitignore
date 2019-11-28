@@ -10,3 +10,4 @@ database.json
 word2vec.model
 
 # search_image_data
+*.npy
