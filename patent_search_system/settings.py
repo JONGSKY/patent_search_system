@@ -26,7 +26,7 @@ SECRET_KEY = 'hr^auw_he50_6_rhkd$h_20ng&m$0@mlwg8v%exfrp4z)skll3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['pamplona.gachon.ac.kr']
 
 
 # Application definition
