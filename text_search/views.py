@@ -39,12 +39,11 @@ def text_result(request):
     # data_list = data_list[9::-1]
     time = datetime.now()
     print(time-time_1)
-    # random.shuffle(data_list)
-    # time = datetime.now()
-    # print(time - time_1)
-    # data_list = data_list[:1000]
+    data_list = data_list[:10000]
     # time = datetime.now()
     # print(time-time_1)
+    time = datetime.now()
+    print(time-time_1)
     data_list = list(data_list.values())
     time = datetime.now()
     print(time-time_1)

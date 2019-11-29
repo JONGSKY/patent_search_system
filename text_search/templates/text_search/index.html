@@ -35,13 +35,15 @@
             height: 115px;
         }
         td.details-control {
-    background: url('https://raw.githubusercontent.com/DataTables/DataTables/master/examples/resources/details_open.png') no-repeat center center;
+    background: url("{% static 'text_search/details_image/details_open.png' %}") no-repeat center center;
     cursor: pointer;
 }
 tr.details td.details-control {
-    background: url('https://raw.githubusercontent.com/DataTables/DataTables/master/examples/resources/details_close.png') no-repeat center center;
+    background: url("{% static 'text_search/details_image/details_close.png' %}") no-repeat center center;
 }
-
+     text:hover {
+        stroke: black;
+    }
 
 
 
