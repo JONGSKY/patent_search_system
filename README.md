@@ -6,7 +6,9 @@
 ## 프로젝트 기간
 2019년 9월 ~
 
-## 가상환경 python버전 3.6.9
+## 환경
+- Ubuntu 18.04.3 LTS 
+- 가상환경 python버전 3.6.9
 - 가상환경 설치 파일 저장 방법
   - pip freeze > requirements.txt
 - 가상환경 파일로 설치 방법
