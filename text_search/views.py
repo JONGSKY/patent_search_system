@@ -37,13 +37,9 @@ def text_result(request):
     data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list))).order_by('-date')
     # data_list = data_list[::-1][:9]
     # data_list = data_list[9::-1]
-    time = datetime.now()
-    print(time-time_1)
     data_list = data_list[:10000]
     # time = datetime.now()
     # print(time-time_1)
-    time = datetime.now()
-    print(time-time_1)
     data_list = list(data_list.values())
     time = datetime.now()
     print(time-time_1)
