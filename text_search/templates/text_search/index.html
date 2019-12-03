@@ -2,7 +2,8 @@
 {% load static %}
 
 {% block javasrcipt %}
-<script src="{% static 'text_search/text_search.js' %}"></script>
+<script src="{% static 'text_search/wordcloud.js' %}"></script>
+<script src="{% static 'text_search/text_result.js' %}"></script>
 
 
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
@@ -94,6 +95,9 @@
     </div>
 </section>
 
+
+<section class="page-section" id="result_section" style="display: none;">
+
     <div class="container">
         <h2 class="text-center mt-0">Clustering</h2>
         <hr class="divider my-4">
@@ -102,42 +106,32 @@
         <div class="col-sm-1 col-md-2"></div>
     </div>
 
-<section class="page-section" id="result_section" style="display: none;">
-
-<!--    <div class="container">-->
-<!--        <h2 class="text-center mt-0">Clustering</h2>-->
-<!--        <hr class="divider my-4">-->
-<!--        <div class="col-sm-1 col-md-2"></div>-->
-<!--        <div id="my_dataviz" class="container col-sm-9, col-md-8"></div>-->
-<!--        <div class="col-sm-1 col-md-2"></div>-->
-<!--    </div>-->
-
-    <div class="container">
+    <div id='result_div' class="container">
         <h2 class="text-center mt-0">Results</h2>
         <hr class="divider my-4">
 
-        <table id="result_table" class="display" style="width:100%">
-            <thead>
-            <tr>
-                <th></th>
-                <th>patent_id</th>
-                <th>title</th>
-                <th>country</th>
-                <th>date</th>
-                <th>site</th>
-            </tr>
-            </thead>
-            <tfoot>
-            <tr>
-                <th></th>
-                <th>patent_id</th>
-                <th>title</th>
-                <th>country</th>
-                <th>date</th>
-                <th>site</th>
-            </tr>
-            </tfoot>
-        </table>
+<!--        <table id="result_table" class="display" style="width:100%">-->
+<!--            <thead>-->
+<!--            <tr>-->
+<!--                <th></th>-->
+<!--                <th>patent_id</th>-->
+<!--                <th>title</th>-->
+<!--                <th>country</th>-->
+<!--                <th>date</th>-->
+<!--                <th>site</th>-->
+<!--            </tr>-->
+<!--            </thead>-->
+<!--            <tfoot>-->
+<!--            <tr>-->
+<!--                <th></th>-->
+<!--                <th>patent_id</th>-->
+<!--                <th>title</th>-->
+<!--                <th>country</th>-->
+<!--                <th>date</th>-->
+<!--                <th>site</th>-->
+<!--            </tr>-->
+<!--            </tfoot>-->
+<!--        </table>-->
 
     </div>
 </section>
