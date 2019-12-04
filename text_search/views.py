@@ -39,7 +39,7 @@ def text_result(request):
     # 특허는 최신순서로 정렬
     time_1 = datetime.now()
     print(time_1)
-    data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list))).order_by('-date')
+    data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list))).order_by('-date')[:100]
 
     patent_id_list = list(data_list.values_list('patent_id', flat=True))
     time = datetime.now()
@@ -56,6 +56,10 @@ def text_result(request):
     return JsonResponse(result, safe=False)
 
 import json
+
+
+from django.core import serializers
+
 
 def clustering_map(request):
     patent_id_list = request.GET['patent_id'].split(',')
@@ -76,8 +80,13 @@ def clustering_map(request):
     # df_new = pd.DataFrame()
     # df_new['x'] = transformed[:, 0]
     # df_new['y'] = transformed[:, 1]
-    result = {"x_value" : transformed[:, 0],
-                "y_value" : transformed[:, 1]}
+
+    result = {"x_value" : list(transformed[:, 0]),
+                "y_value" : list(transformed[:, 1])}
     print(result)
-    result = json.dumps(str(result))
+    # result = serialize('json', result)
+    # result = json.dumps(result, cls=NumpyEncoder)
+    # result = json.dumps(str(result))
+    # result = serializers.serialize("json", result)
+    # print(result)
     return JsonResponse(result, safe=False)

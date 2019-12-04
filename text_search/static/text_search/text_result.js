@@ -173,10 +173,9 @@ $('#search_patent').click(function () {
 
 //Read the data
 
-
                     $.ajax({
             method: "GET",
-            dataType : "json",
+            dataType : "django-json",
             url: 'clustering_map',
             data: {'patent_id': JSON.stringify(result['patent_id_list'].slice(1, 10)) },
             beforeSend: function () {
@@ -190,11 +189,17 @@ $('#search_patent').click(function () {
             },
             success: function (data) {
                 //    clustering 과정
+                alert('aaa');
+                                    console.log(data);
 
+                var obj =  $.parseJSON(data);
                     var obj_1 = eval(data);
-                    alert(obj_1.x_value);
+                    alert(obj);
                     var obj_2 = JSON.parse(data);
-                    alert(obj_2.x_value);
+                    alert(obj_2);
+                    console.log(jQuery.type(obj));
+                    console.log(obj);
+                    console.log(jQuery.type(obj_2));
 
                     // d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/iris.csv", function (data) {
 
