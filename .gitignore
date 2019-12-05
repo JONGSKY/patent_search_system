@@ -6,8 +6,10 @@
 # information of database
 database.json
 
-# word embedding model
+# model
 word2vec.model
+embeddings.npy
+image_files.npy
 
 # search_image_data
 *.npy

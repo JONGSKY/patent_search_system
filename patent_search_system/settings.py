@@ -26,7 +26,7 @@ SECRET_KEY = 'hr^auw_he50_6_rhkd$h_20ng&m$0@mlwg8v%exfrp4z)skll3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['pamplona.gachon.ac.kr','127.0.0.1']
 
 
 # Application definition
@@ -94,7 +94,7 @@ DATABASES = {
         'USER': user_, # 데이터베이스 계정
         'PASSWORD': password_, # 계정 비밀번호
         'HOST': host_, # 데이테베이스 주소(IP)
-        'PORT': port_, # 데이터베이스 포트(보통은 3306)
+        'PORT': port_, # 데이터베이스 포트
         'OPTIONS': {
             'init_command': 'SET sql_mode="STRICT_TRANS_TABLES"'
         }

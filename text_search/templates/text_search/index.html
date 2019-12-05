@@ -5,9 +5,7 @@
 <script src="{% static 'text_search/text_search.js' %}"></script>
 
 
-
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
-
 
 
 <!--<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.js"></script>-->
@@ -24,25 +22,29 @@
 <!--<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/responsive/2.2.3/css/dataTables.responsive.css">-->
 
 
-
 <style>
-        footer {
-            position:fixed;
-            bottom:0;
-            width:100%;
-        }
-        #footer {
-            height: 115px;
-        }
-        td.details-control {
-    background: url('https://raw.githubusercontent.com/DataTables/DataTables/master/examples/resources/details_open.png') no-repeat center center;
-    cursor: pointer;
-}
-tr.details td.details-control {
-    background: url('https://raw.githubusercontent.com/DataTables/DataTables/master/examples/resources/details_close.png') no-repeat center center;
-}
+    footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
 
+    #footer {
+        height: 115px;
+    }
 
+    td.details-control {
+        background: url("{% static 'text_search/details_image/details_open.png' %}") no-repeat center center;
+        cursor: pointer;
+    }
+
+    tr.details td.details-control {
+        background: url("{% static 'text_search/details_image/details_close.png' %}") no-repeat center center;
+    }
+
+    text:hover {
+        stroke: black;
+    }
 
 
 </style>
@@ -63,11 +65,11 @@ tr.details td.details-control {
                 <br>
                 <div class="row text-center">
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control text-center" placeholder="검색하고 싶은 키워드를 입력해주세요"
+                        <input type="text" class="form-control text-center" placeholder="검색 키워드를 입력해주세요"
                                aria-label="search_keyword" id="search_keyword" aria-describedby="basic-addon2">
                         <div class="input-group-append">
-                            <button id="submit_keyword" class="btn btn-outline-secondary" type="button"> WordCloud <i
-                                    class="fa fa-search" aria-hidden="true"></i></button>
+                            <button id="submit_keyword" class="btn btn-outline-secondary" type="button"> WordCloud
+                                <i class="fa fa-search" aria-hidden="true"></i></button>
                         </div>
                     </div>
                 </div>
@@ -92,52 +94,30 @@ tr.details td.details-control {
     </div>
 </section>
 
-<!--<section class="page-section" id="result_section" style="display: none;">-->
-<!--    <div class="container">-->
-<!--        <h2 class="text-center mt-0">Results</h2>-->
-<!--        <hr class="divider my-4">-->
-<!--        <div id="results" class="container">-->
-<!--            <div>-->
-<!--                <button id="all_open" class="btn btn-link" type="button"> 전체 열기</button>-->
-<!--                <button id="all_close" class="btn btn-link" type="button"> 전체 닫기</button>-->
-<!--            </div>-->
-<!--            <div id="accordion">-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</section>-->
-
-<!--<section id="result_pagination" style="display: none;">-->
-<!--    <div class="container">-->
-<!--        <nav aria-label="Page navigation example">-->
-<!--          <ul class="pagination justify-content-center">-->
-<!--            <li class="page-item">-->
-<!--              <a class="page-link" href="#" aria-label="Previous">-->
-<!--                <span aria-hidden="true">&laquo;</span>-->
-<!--                <span class="sr-only">Previous</span>-->
-<!--              </a>-->
-<!--            </li>-->
-<!--            <li class="page-item"><a class="page-link" href="#">1</a></li>-->
-<!--            <li class="page-item"><a class="page-link" href="#">2</a></li>-->
-<!--            <li class="page-item"><a class="page-link" href="#">3</a></li>-->
-<!--            <li class="page-item">-->
-<!--              <a class="page-link" href="#" aria-label="Next">-->
-<!--                <span aria-hidden="true">&raquo;</span>-->
-<!--                <span class="sr-only">Next</span>-->
-<!--              </a>-->
-<!--            </li>-->
-<!--          </ul>-->
-<!--        </nav>-->
-<!--    </div>-->
-<!--</section>-->
+    <div class="container">
+        <h2 class="text-center mt-0">Clustering</h2>
+        <hr class="divider my-4">
+        <div class="col-sm-1 col-md-2"></div>
+        <div id="my_dataviz" class="container col-sm-9, col-md-8"></div>
+        <div class="col-sm-1 col-md-2"></div>
+    </div>
 
 <section class="page-section" id="result_section" style="display: none;">
+
+<!--    <div class="container">-->
+<!--        <h2 class="text-center mt-0">Clustering</h2>-->
+<!--        <hr class="divider my-4">-->
+<!--        <div class="col-sm-1 col-md-2"></div>-->
+<!--        <div id="my_dataviz" class="container col-sm-9, col-md-8"></div>-->
+<!--        <div class="col-sm-1 col-md-2"></div>-->
+<!--    </div>-->
+
     <div class="container">
         <h2 class="text-center mt-0">Results</h2>
         <hr class="divider my-4">
 
         <table id="result_table" class="display" style="width:100%">
-        <thead>
+            <thead>
             <tr>
                 <th></th>
                 <th>patent_id</th>
@@ -146,8 +126,8 @@ tr.details td.details-control {
                 <th>date</th>
                 <th>site</th>
             </tr>
-        </thead>
-        <tfoot>
+            </thead>
+            <tfoot>
             <tr>
                 <th></th>
                 <th>patent_id</th>
@@ -156,10 +136,10 @@ tr.details td.details-control {
                 <th>date</th>
                 <th>site</th>
             </tr>
-        </tfoot>
-    </table>
+            </tfoot>
+        </table>
 
-            </div>
+    </div>
 </section>
 
 <div id='footer'></div>

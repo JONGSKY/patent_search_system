@@ -1,31 +1,35 @@
 // 워드클라우드
 
 // 워드클라우드 검색어로 생성하기
-$('#submit_keyword').click(function(){
+$('#submit_keyword').click(function () {
     var keywords = $('#search_keyword').val().trim();
-    if (keywords === ""){
+    if (keywords === "") {
         alert('검색어를 입력 후 검색해주세요!');
     } else {
         $.ajax({
             method: "GET",
             url: 'wordcloud',
             data: {'keyword': keywords},
-            beforeSend: function() {
-            $('html').css("cursor","wait");
+            beforeSend: function () {
+                $('html').css("cursor", "wait");
             },
-            complete: function() {
-            $('html').css("cursor","auto");
+            complete: function () {
+                $('html').css("cursor", "auto");
             },
             success: function (data) {
                 myWords = data['myWords'];
-                if (myWords == ""){
-                    alert(' 죄송합니다. \n 해당 검색어로는 wordcloud 제작이 어렵습니다! \n 다른 검색어로 검색해주세요');}
-                    else {
+                if (myWords == "") {
+                    alert(' 죄송합니다. \n 해당 검색어로는 wordcloud 제작이 어렵습니다! \n 다른 검색어로 검색해주세요');
+                } else {
                     $('#result_section').css('display', 'none');
                     $('#result_pagination').css('display', 'none');
                     $('#wordcloud_section').css('display', 'block');
                     createWordCloud(myWords);
-                    }
+
+                    // var offset = $("#wordcloud_section").offset();
+                    // $('html, body').animate({scrollTop : offset.top}, 400);
+
+                }
             }
         })
     }
@@ -44,12 +48,18 @@ var svg = d3.select("#wordcloud_svg")
 var layout = d3.layout.cloud().size([width, height]);
 
 // 워드클라우드 생성 함수
-function createWordCloud(myWords){
+function createWordCloud(myWords) {
     $("#cloud_s").remove();
-    layout = layout.words(myWords.map(function(d) { return {text: d.word, size:d.size}; }))
+    layout = layout.words(myWords.map(function (d) {
+        return {text: d.word, size: d.size};
+    }))
         .padding(5)        //space between words
-        .rotate(function() { return ~~(Math.random() * 2) * 90; })
-        .fontSize(function(d) { return d.size; })      // font size of words
+        .rotate(function () {
+            return ~~(Math.random() * 2) * 90;
+        })
+        .fontSize(function (d) {
+            return d.size;
+        })      // font size of words
         .on("end", draw);
     layout.start();
 }
@@ -62,22 +72,26 @@ function draw(words) {
         .selectAll("text")
         .data(words)
         .enter().append("text")
-        .style("font-size", function(d) { return d.size; })
+        .style("font-size", function (d) {
+            return d.size;
+        })
         .style("fill", "#69b3a2")
         .attr("text-anchor", "middle")
         .style("font-family", "Impact")
-        .attr("transform", function(d) {
+        .attr("transform", function (d) {
             return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
         })
-        .text(function(d) { return d.text; })
-        .on("click", function(d){
+        .text(function (d) {
+            return d.text;
+        })
+        .on("click", function (d) {
             var ctr = d.text;
             var keyword_tag = '<div class="col-xs-1 form-inline add_keyword_group">' +
-                '<input name="add_keyword" class="form-control keywords" style="background-color:#D9E5FF; color:#6799FF; margin:10px 5px 10px 5px" type="text" value=' + ctr +'>' +
+                '<input name="add_keyword" class="form-control keywords" style="background-color:#D9E5FF; color:#6799FF; margin:10px 5px 10px 5px" type="text" value=' + ctr + '>' +
                 '<div class="input-group-append div_add_keyword"><button class="btn btn-primary button_add_keyword" type="button"><i class="fa fa-times"></i></button></div>';
 
             var keyword_tag = '<div class="input-group form-inline col-3 add_keyword_group" style="margin-top: 5px;">\n' +
-                '    <input type="text" name="add_keyword" class="form-control keywords" value="'+ ctr + '">\n' +
+                '    <input type="text" name="add_keyword" class="form-control keywords" value="' + ctr + '">\n' +
                 '    <div class="input-group-append div_add_keyword">\n' +
                 '      <button class="btn btn-danger button_add_keyword" type="button"><i class="fa fa-times"></i></button>  \n' +
                 '     </div>\n' +
@@ -86,16 +100,23 @@ function draw(words) {
             $('#keyword_list').append(keyword_tag);
             $("#cloud_s").remove();
 
-            for(var i in myWords){
-                if(myWords[i].word===d.text){
-                    myWords.splice(i,1);}
+            for (var i in myWords) {
+                if (myWords[i].word === d.text) {
+                    myWords.splice(i, 1);
+                }
             }
             var layout = d3.layout.cloud()
                 .size([width, height])
-                .words(myWords.map(function(d) { return {text: d.word, size:d.size}; }))
+                .words(myWords.map(function (d) {
+                    return {text: d.word, size: d.size};
+                }))
                 .padding(5)        //space between words
-                .rotate(function() { return ~~(Math.random() * 2) * 90; })
-                .fontSize(function(d) { return d.size; })      // font size of words
+                .rotate(function () {
+                    return ~~(Math.random() * 2) * 90;
+                })
+                .fontSize(function (d) {
+                    return d.size;
+                })      // font size of words
                 .on("end", draw);
             layout.start();
         })
@@ -103,160 +124,245 @@ function draw(words) {
 }
 
 // 추가 키워드 제거 후 워드클라우드 재생성
-$('body').on("click", ".div_add_keyword", function(){
+$('body').on("click", ".div_add_keyword", function () {
     $(this).parent("div").remove();
 
     var del_val = $(this).parent("div").children("input").attr('value');
     $("#cloud_s").remove();
-    myWords.push({word:del_val, size: "40"});
+    myWords.push({word: del_val, size: "40"});
 
     var layout = d3.layout.cloud()
         .size([width, height])
-        .words(myWords.map(function(d) { return {text: d.word, size:d.size}; }))
+        .words(myWords.map(function (d) {
+            return {text: d.word, size: d.size};
+        }))
         .padding(5)        //space between words
-        .rotate(function() { return ~~(Math.random() * 2) * 90; })
-        .fontSize(function(d) { return d.size; })      // font size of words
+        .rotate(function () {
+            return ~~(Math.random() * 2) * 90;
+        })
+        .fontSize(function (d) {
+            return d.size;
+        })      // font size of words
         .on("end", draw);
     layout.start();
 });
 
 
-
-
-
-
-
-
-
-
 //// 검색결과
 
-function format ( d ) {
-    return '<h5>Abstract</h5>'+d.abstract+'<br>';
+function format(d) {
+    return '<h5>Abstract</h5>' + d.abstract + '<br>';
 //        '<h5 style="display: inline;">Title</h5>: '+d.title+'<br>'+
 }
 
 // 키워드 + 추가키워드로 검색결과 확인하기
-$('#search_patent').click(function(){
+$('#search_patent').click(function () {
     var keywords = $('#search_keyword').val().trim();
-    $("input[name=add_keyword]").each(function(idx){
+    $("input[name=add_keyword]").each(function (idx) {
         var add_keyword = $("input[name=add_keyword]:eq(" + idx + ")").val().trim();
-        if(add_keyword !== ""){
+        if (add_keyword !== "") {
             keywords = keywords + " " + add_keyword;
         }
     });
-    if (keywords === ""){
+    if (keywords === "") {
         alert('검색어를 입력 후 검색해주세요!');
     } else {
         $.ajax({
             method: "GET",
             url: 'text_result',
             data: {'keyword': keywords},
-            beforeSend: function() {
-                $('html').css("cursor","wait");
+            beforeSend: function () {
+                $('html').css("cursor", "wait");
                 $('#keyword_list').css('display', 'none');
             },
-            complete: function() {
-            //통신이 완료된 후 처리되는 함수
+            complete: function () {
+                //통신이 완료된 후 처리되는 함수
                 $('#keyword_list').css('display', '');
-                $('html').css("cursor","auto");
+                $('html').css("cursor", "auto");
             },
             success: function (data) {
-                if (data == ""){
-                    alert(' 죄송합니다. \n 해당 검색어로는 result 결과물이 없습니다! \n 다른 검색어로 검색해주세요');}
-                else {
-                $('#wordcloud_section').css('display', 'none');
-                $('#result_section').css('display', 'block');
-                $('#result_pagination').css('display', 'block');
-                $('#search_keyword').val(keywords);
-                $('#keyword_list').empty();
-                $("#accordion").empty();
-                $("#cloud_s").remove();
+                if (data == "") {
+                    alert(' 죄송합니다. \n 해당 검색어로는 result 결과물이 없습니다! \n 다른 검색어로 검색해주세요');
+                } else {
+                    $('#wordcloud_section').css('display', 'none');
+                    $('#result_section').css('display', 'block');
+                    $('#result_pagination').css('display', 'block');
+                    $('#search_keyword').val(keywords);
+                    $('#keyword_list').empty();
+                    $("#accordion").empty();
+                    $("#cloud_s").remove();
 
-                var dt = $('#result_table').DataTable( {
-                    data: data,
-                    columns: [
+                    var dt = $('#result_table').DataTable({
+                            // destroy: true,
+                            data: data,
+                            columns: [
                                 {
-                "class":          "details-control",
-                "orderable":      false,
-                "data":           null,
-                "defaultContent": ""
-            },
-                        { data: 'patent_id' },
-                        { data: 'title' },
-                        { data: 'country' },
-                        { data: 'date' },
-                        { data: "country",
-                            "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
-                            $(nTd).html("<a target='_blank' href='http://patents.google.com/patent/"+oData.country+oData.number+oData.kind+"'>Info</a>");
+                                    "class": "details-control",
+                                    "orderable": false,
+                                    "data": null,
+                                    "defaultContent": ""
+                                },
+                                {data: 'patent_id'},
+                                {data: 'title'},
+                                {data: 'country'},
+                                {data: 'date'},
+                                {
+                                    data: "country",
+                                    "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                                        $(nTd).html("<a target='_blank' href='http://patents.google.com/patent/" + oData.country + oData.number + oData.kind + "'>Info</a>");
+                                    }
+                                },
+                            ],
+                            "order": [[1, 'asc']]
+                        }
+                    );
+                    // Array to track the ids of the details displayed rows
+                    var detailRows = [];
+                    $('#result_table tbody').on('click', 'tr td.details-control', function () {
+                        var tr = $(this).closest('tr');
+                        var row = dt.row(tr);
+                        var idx = $.inArray(tr.attr('id'), detailRows);
+
+                        if (row.child.isShown()) {
+                            tr.removeClass('details');
+                            row.child.hide();
+
+                            // Remove from the 'open' array
+                            detailRows.splice(idx, 1);
+                        } else {
+                            tr.addClass('details');
+                            row.child(format(row.data())).show();
+
+                            // Add to the 'open' array
+                            if (idx === -1) {
+                                detailRows.push(tr.attr('id'));
                             }
-                            },
-                    ],
-        "order": [[1, 'asc']]
-    }
-                     );
-                       // Array to track the ids of the details displayed rows
-    var detailRows = [];
-    $('#result_table tbody').on( 'click', 'tr td.details-control', function () {
-        var tr = $(this).closest('tr');
-        var row = dt.row( tr );
-        var idx = $.inArray( tr.attr('id'), detailRows );
+                        }
+                    });
 
-        if ( row.child.isShown() ) {
-            tr.removeClass( 'details' );
-            row.child.hide();
+                    // On each draw, loop over the `detailRows` array and show any child rows
+                    dt.on('draw', function () {
+                        $.each(detailRows, function (i, id) {
+                            $('#' + id + ' td.details-control').trigger('click');
+                        });
+                    });
 
-            // Remove from the 'open' array
-            detailRows.splice( idx, 1 );
-        }
-        else {
-            tr.addClass( 'details' );
-            row.child( format( row.data() ) ).show();
 
-            // Add to the 'open' array
-            if ( idx === -1 ) {
-                detailRows.push( tr.attr('id') );
+                    $(document).ready(function () {
+
+                        /* Column별 검색기능 추가 */
+                        $('#result_table_filter').prepend('<select id="select"></select>');
+                        $('#result_table > thead > tr').children().each(function (indexInArray, valueOfElement) {
+                            if (indexInArray == 0 | indexInArray == 5) {
+                            } else {
+                                $('#select').append('<option>' + valueOfElement.innerHTML + '</option>');
+                            }
+                        });
+
+                        $('.dataTables_filter input').unbind().bind('keyup', function () {
+                            var colIndex = document.querySelector('#select').selectedIndex + 1;
+                            dt.column(colIndex).search(this.value).draw();
+                        });
+
+                    });
+
+                    var offset = $("#result_section").offset();
+                    $('html, body').animate({scrollTop: offset.top}, 400);
+
+                }
             }
-        }
-    } );
-
-    // On each draw, loop over the `detailRows` array and show any child rows
-    dt.on( 'draw', function () {
-        $.each( detailRows, function ( i, id ) {
-            $('#'+id+' td.details-control').trigger( 'click' );
-        } );
-    } );
-
-
-
-$(document).ready(function () {
-
-        /* Column별 검색기능 추가 */
-    $('#result_table_filter').prepend('<select id="select"></select>');
-    $('#result_table > thead > tr').children().each(function (indexInArray, valueOfElement) {
-        if (indexInArray == 0 | indexInArray == 5){}
-        else {
-        $('#select').append('<option>'+valueOfElement.innerHTML+'</option>');}
-    });
-
-    $('.dataTables_filter input').unbind().bind('keyup', function () {
-        var colIndex = document.querySelector('#select').selectedIndex+1;
-        dt.column(colIndex).search(this.value).draw();
-    });
-
-});
-
-            }
-          }
         })
     }
 });
 
+// set the dimensions and margins of the graph
+    var margin = {top: 10, right: 30, bottom: 30, left: 60},
+        width = 460 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+// append the svg object to the body of the page
+    var svg = d3.select("#my_dataviz")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+
+//Read the data
+    d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/iris.csv", function (data) {
+
+        // Add X axis
+        var x = d3.scaleLinear()
+            .domain([4, 8])
+            .range([0, width]);
+        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x));
+
+        // Add Y axis
+        var y = d3.scaleLinear()
+            .domain([0, 9])
+            .range([height, 0]);
+        svg.append("g")
+            .call(d3.axisLeft(y));
+
+        // Color scale: give me a specie name, I return a color
+        var color = d3.scaleOrdinal()
+            .domain(["setosa", "versicolor", "virginica"])
+            .range(["#440154ff", "#21908dff", "#fde725ff"])
 
 
+        // Highlight the specie that is hovered
+        var highlight = function (d) {
 
+            selected_specie = d.Species
 
+            d3.selectAll(".dot")
+                .transition()
+                .duration(200)
+                .style("fill", "lightgrey")
+                .attr("r", 3)
 
+            d3.selectAll("." + selected_specie)
+                .transition()
+                .duration(200)
+                .style("fill", color(selected_specie))
+                .attr("r", 7)
+        }
+
+        // Highlight the specie that is hovered
+        var doNotHighlight = function () {
+            d3.selectAll(".dot")
+                .transition()
+                .duration(200)
+                .style("fill", "lightgrey")
+                .attr("r", 5)
+        }
+
+        // Add dots
+        svg.append('g')
+            .selectAll("dot")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("class", function (d) {
+                return "dot " + d.Species
+            })
+            .attr("cx", function (d) {
+                return x(d.Sepal_Length);
+            })
+            .attr("cy", function (d) {
+                return y(d.Petal_Length);
+            })
+            .attr("r", 5)
+            .style("fill", function (d) {
+                return color(d.Species)
+            })
+            .on("mouseover", highlight)
+            .on("mouseleave", doNotHighlight)
+
+    })
 
 //// 검색결과
 //
@@ -317,9 +423,6 @@ $(document).ready(function () {
 //        })
 //    }
 //});
-
-
-
 
 
 //// 검색결과
