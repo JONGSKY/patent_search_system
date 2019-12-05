@@ -100,6 +100,10 @@ DATABASES = {
         }
     }
 }
+#
+# DATABASES['default']['OPTIONS'] = {
+#     'ssl': {'ca': '/mnt/storage/mysql/ca.pem'}
+# }
 
 # DATABASES = {
 #     'default': {

@@ -31,6 +31,7 @@ $('#search_patent').click(function () {
                 $('html').css("cursor", "auto");
             },
             success: function (result) {
+                console.log(result)
                 if (result['data_list'] == "") {
                     alert(' 죄송합니다. \n 해당 검색어로는 result 결과물이 없습니다! \n 다른 검색어로 검색해주세요');
                 } else {
@@ -159,8 +160,8 @@ $('#search_patent').click(function () {
 
                                                             // set the dimensions and margins of the graph
                     var margin = {top: 10, right: 30, bottom: 30, left: 60},
-                        width = 460 - margin.left - margin.right,
-                        height = 400 - margin.top - margin.bottom;
+                        width = 800 - margin.left - margin.right,
+                        height = 600 - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
                     var svg = d3.select("#my_dataviz")
@@ -175,9 +176,10 @@ $('#search_patent').click(function () {
 
                     $.ajax({
             method: "GET",
-            dataType : "django-json",
+            dataType : "json",
             url: 'clustering_map',
-            data: {'patent_id': JSON.stringify(result['patent_id_list'].slice(1, 10)) },
+            // data: {'patent_id': JSON.stringify(result['patent_id_list'].slice(1, 5000)) },
+            // data: "",
             beforeSend: function () {
                 $('html').css("cursor", "wait");
                 // $('#keyword_list').css('display', 'none');
@@ -187,25 +189,29 @@ $('#search_patent').click(function () {
                 // $('#keyword_list').css('display', '');
                 $('html').css("cursor", "auto");
             },
-            success: function (data) {
-                //    clustering 과정
-                alert('aaa');
-                                    console.log(data);
+            success: function (result) {
+                console.log(result);
 
-                var obj =  $.parseJSON(data);
-                    var obj_1 = eval(data);
-                    alert(obj);
-                    var obj_2 = JSON.parse(data);
-                    alert(obj_2);
-                    console.log(jQuery.type(obj));
-                    console.log(obj);
-                    console.log(jQuery.type(obj_2));
+                var data = result['xy'];
+                var axis = result['axis'];
+                //    clustering 과정
+                // alert(data['x_value']);
+                //
+                // var obj =  $.parseJSON(data);
+                //     var obj_1 = eval(data);
+                //     alert(obj);
+                //     var obj_2 = JSON.parse(data);
+                //     alert(obj_2);
+                //     console.log(jQuery.type(obj));
+                //     console.log(obj);
+                //     console.log(jQuery.type(obj_2));
 
                     // d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/iris.csv", function (data) {
-
+                    //     console.log(data);
                         // Add X axis
                         var x = d3.scaleLinear()
-                            .domain([10, 100])
+                            // .domain([10, 100])
+                            .domain([axis['s_x']-10, axis['b_x']+10])
                             .range([0, width]);
                         svg.append("g")
                             .attr("transform", "translate(0," + height + ")")
@@ -213,34 +219,34 @@ $('#search_patent').click(function () {
 
                         // Add Y axis
                         var y = d3.scaleLinear()
-                            .domain([0, 9])
+                            .domain([axis['s_y']-10, axis['b_y']+10])
                             .range([height, 0]);
                         svg.append("g")
                             .call(d3.axisLeft(y));
 
                         // Color scale: give me a specie name, I return a color
                         var color = d3.scaleOrdinal()
-                            .domain(["setosa", "versicolor", "virginica"])
-                            .range(["#440154ff", "#21908dff", "#fde725ff"])
+                            .domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+                            .range(["#55efc4", "#81ecec", "#74b9ff", "#a29bfe", "#dfe6e9", "#ffeaa7", "#fab1a0", "#ff7675", "#fd79a8", "#636e72"]);
 
 
                         // Highlight the specie that is hovered
                         var highlight = function (d) {
 
-                            selected_specie = d.Species
+                            selected_specie = d.cluster;
 
                             d3.selectAll(".dot")
                                 .transition()
                                 .duration(100)
                                 .style("fill", "lightgrey")
-                                .attr("r", 3)
+                                .attr("r", 3);
 
                             d3.selectAll("." + selected_specie)
                                 .transition()
                                 .duration(100)
                                 .style("fill", color(selected_specie))
                                 .attr("r", 7)
-                        }
+                        };
 
                         // Highlight the specie that is hovered
                         var doNotHighlight = function () {
@@ -248,11 +254,11 @@ $('#search_patent').click(function () {
                                 .transition()
                                 .duration(100)
                                 .style("fill", function (d) {
-                                        return color(d.Species)
+                                        return color(d.cluster)
                                     }
                                 )
                                 .attr("r", 5)
-                        }
+                        };
 
                         // Add dots
                         svg.append('g')
@@ -264,9 +270,10 @@ $('#search_patent').click(function () {
                             //     return "clustering_" + d.Species
                             // })
                             .attr("class", function (d) {
-                                return "dot " + d.Species
+                                return "dot " + d.cluster
                             })
                             .attr("cx", function (d) {
+                                // alert(d.Sepal_Length);
                                 return x(d.x_value);
                             })
                             .attr("cy", function (d) {
@@ -274,7 +281,7 @@ $('#search_patent').click(function () {
                             })
                             .attr("r", 5)
                             .style("fill", function (d) {
-                                return color(d.Species)
+                                return color(d.cluster)
                             })
                             .on("mouseover", highlight)
                             .on("mouseleave", doNotHighlight)
