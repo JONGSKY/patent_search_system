@@ -2,23 +2,24 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from gensim.models.word2vec import Word2Vec
 from text_search.models import Patent
+from text_search.models import PatentEmbedding
 from django.db.models import Q
-
-from functools import reduce
-import operator
-
-from datetime import datetime
-# import random
-from sklearn.manifold import TSNE
-# import pandas as pd
+from django.core import serializers
+#
+# import re
+# import json
 import pickle
-import re
+import operator
+from functools import reduce
+from datetime import datetime
+
+import numpy as np
+from sklearn.manifold import TSNE
+from sklearn.cluster import KMeans
+
 
 model = Word2Vec.load('word2vec.model')
 patent_list, embedding_list = pickle.load(open("patent_field_best_model.embed", "rb"))
-
-
-from django.core import serializers
 
 
 def index(request):
@@ -37,12 +38,13 @@ def wordcloud_search(request):
     return JsonResponse(context)
 
 
-patent_id_list=None
+patent_id_list = []
+
 
 def text_result(request):
     global patent_id_list
     final_keyword = request.GET['keyword']
-    keyword_list = [word.lower().strip() for word in final_keyword.split() if word!='and']
+    keyword_list = [word.lower().strip() for word in final_keyword.split() if word != 'and']
     # 특허는 최신순서로 정렬
     time_1 = datetime.now()
     print(time_1)
@@ -51,66 +53,95 @@ def text_result(request):
     data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list)))
     time = datetime.now()
     print(time-time_1)
-    print(len(data_list))
+    time_1 = time
+
     data_list = list(data_list.values('patent_id', 'title', 'abstract', 'country', 'date'))
-    time = datetime.now()
-    print(time - time_1)
     patent_id_list = [data['patent_id'] for data in data_list]
+    result = {"data_list": data_list}
+
     time = datetime.now()
     print(time-time_1)
-    # result = {"data_list" : data_list,}
-    # return JsonResponse(result, safe=False)
+
+    return JsonResponse(result, safe=False)
 
     # serialized_qs = serializers.serialize('json', data_list)
-    # print(serialized_qs)
-    data = {"data_list": data_list}
-    return JsonResponse(data)
-
-import json
+    # time = datetime.now()
+    # print(time - time_1)
+    # return HttpResponse(serialized_qs, content_type='application/json; charset=UTF-8')
 
 
-from sklearn.cluster import KMeans
+def tsne_transform(data, lr=100):
+    tsne = TSNE(learning_rate=lr)
+    transformed = tsne.fit_transform(data)
+    return transformed[:, 0].tolist(), transformed[:, 1].tolist()
+
+
+def kmeans_clustering(data, n_cluster=10, n_jobs=-1):
+    kmeans = KMeans(n_clusters=n_cluster, n_jobs=n_jobs)
+    labels = kmeans.fit_transform(data)
+    return labels
+
 
 def clustering_map(request):
     global patent_id_list
-
     time_1 = datetime.now()
     print(time_1)
     # patent_id_list = request.GET['patent_id'].split(',')
 
-    cluster_patent_id = []
-    cluster_embedding = []
-    for i in patent_id_list:
-        index_ = patent_list.index(int(i))
-        cluster_patent_id.append(int(i))
-        cluster_embedding.append(embedding_list[index_])
+    patent_embedding = list(PatentEmbedding.objects.filter(patent_id__in=patent_id_list).values())
+
+    patent_ids = []
+    embedding_list = []
+
+    for data in patent_embedding:
+        patent_ids.append(data['patent_id'])
+        embed = np.fromstring(data['embedding'], dtype=np.float32, sep=' ')
+        embedding_list.append(embed)
+
+        # index_ = patent_list.index(int(i))
+        # cluster_patent_id.append(int(i))
+        # cluster_embedding.append(embedding_list[index_])
 
     time = datetime.now()
     print(time-time_1)
-    tsne = TSNE(learning_rate=100)
-    transformed = tsne.fit_transform(cluster_embedding)
-    time = datetime.now()
-    print(time-time_1)
-    kmeans = KMeans(n_clusters=10, n_jobs=-1)
-    kmeans.fit(cluster_embedding)
-    time = datetime.now()
-    print(time-time_1)
+
     # print(kmeans.labels_)
     # print(datetime.now())
     # df_new = pd.DataFrame()
     # df_new['x'] = transformed[:, 0]
     # df_new['y'] = transformed[:, 1]
-    labels = kmeans.labels_.astype(str).tolist()
+
+    x_values, y_values = tsne_transform(embedding_list)
+
+    labels = kmeans_clustering(embedding_list)
+    labels = labels.astype(str).tolist()
     labels = list(map(lambda x: "cluster_"+x, labels))
 
-    b_x = max(transformed[:, 0]).tolist()
-    s_x = min(transformed[:, 0]).tolist()
-    b_y = max(transformed[:, 1]).tolist()
-    s_y = min(transformed[:, 1]).tolist()
-    xy_value = [{'x_value': x, "y_value": y, "cluster": label} for label, (x, y) in zip(labels, transformed.tolist())]
-    axis_value =  {'b_x':b_x, 's_x':s_x, 'b_y':b_y, 's_y':s_y}
+
+
+    # x_values = transformed[:, 0].tolist()
+    # y_values = transformed[:, 1].tolist()
+    #
+    # s_x, b_x = min(x_values), max(x_values)
+    # s_y, b_y = min(y_values), max(y_values)
+    xy_value = [{'x_value': x, "y_value": y, "cluster": label} for x, y, label in zip(x_values, y_values, labels)]
+
+    axis_value = {'s_x': min(x_values),
+                  'b_x': max(x_values),
+                  's_y': min(y_values),
+                  'b_y': max(y_values)}
+
+    # b_x = max(transformed[:, 0]).tolist()
+    # s_x = min(transformed[:, 0]).tolist()
+    # b_y = max(transformed[:, 1]).tolist()
+    # s_y = min(transformed[:, 1]).tolist()
+
     time = datetime.now()
     print(time-time_1)
+# <<<<<<< HEAD
+#     # print(data_list)
+#     return JsonResponse(data_list, safe=False)
+# =======
     # result = {"x_value" : transformed[:, 0].tolist(),
     #             "y_value" : transformed[:, 1].tolist()}
     # print(type(result['x_value'].tolist()[0]))
@@ -122,3 +153,7 @@ def clustering_map(request):
     # print(result)
     result = {'xy': xy_value, 'axis': axis_value}
     return JsonResponse(result, safe=False)
+
+
+
+

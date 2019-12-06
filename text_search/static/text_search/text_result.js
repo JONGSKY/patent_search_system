@@ -31,8 +31,8 @@ $('#search_patent').click(function () {
                 $('html').css("cursor", "auto");
             },
             success: function (result) {
-                console.log(result)
-                if (result['data_list'] == "") {
+                console.log(result);
+                if (result === "") {
                     alert(' 죄송합니다. \n 해당 검색어로는 result 결과물이 없습니다! \n 다른 검색어로 검색해주세요');
                 } else {
                     $('#wordcloud_section').css('display', 'none');
