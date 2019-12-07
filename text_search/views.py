@@ -19,7 +19,7 @@ from sklearn.cluster import KMeans
 
 
 model = Word2Vec.load('word2vec.model')
-patent_list, embedding_list = pickle.load(open("patent_field_best_model.embed", "rb"))
+# patent_list, embedding_list = pickle.load(open("patent_field_best_model.embed", "rb"))
 
 
 def index(request):
@@ -55,7 +55,7 @@ def text_result(request):
     print(time-time_1)
     time_1 = time
 
-    data_list = list(data_list.values('patent_id', 'title', 'abstract', 'country', 'date'))
+    data_list = list(data_list.values('patent_id', 'title', 'abstract', 'country', 'date','kind','number'))
     patent_id_list = [data['patent_id'] for data in data_list]
     result = {"data_list": data_list}
 
@@ -78,8 +78,10 @@ def tsne_transform(data, lr=100):
 
 def kmeans_clustering(data, n_cluster=10, n_jobs=-1):
     kmeans = KMeans(n_clusters=n_cluster, n_jobs=n_jobs)
-    labels = kmeans.fit_transform(data)
-    return labels
+    # labels = kmeans.fit_transform(data)
+    # return labels
+    kmeans.fit_transform(data)
+    return kmeans.labels_
 
 
 def clustering_map(request):
@@ -87,8 +89,10 @@ def clustering_map(request):
     time_1 = datetime.now()
     print(time_1)
     # patent_id_list = request.GET['patent_id'].split(',')
-
     patent_embedding = list(PatentEmbedding.objects.filter(patent_id__in=patent_id_list).values())
+
+    time = datetime.now()
+    print(time-time_1)
 
     patent_ids = []
     embedding_list = []
@@ -112,12 +116,15 @@ def clustering_map(request):
     # df_new['y'] = transformed[:, 1]
 
     x_values, y_values = tsne_transform(embedding_list)
-
+    time = datetime.now()
+    print(time-time_1)
     labels = kmeans_clustering(embedding_list)
-    labels = labels.astype(str).tolist()
-    labels = list(map(lambda x: "cluster_"+x, labels))
+    # labels = labels.astype(str).tolist()
+    # labels = list(map(lambda x: "cluster_"+x, labels))
+    labels = list(map(lambda x: "cluster_"+str(x), labels))
 
-
+    time = datetime.now()
+    print(time-time_1)
 
     # x_values = transformed[:, 0].tolist()
     # y_values = transformed[:, 1].tolist()
