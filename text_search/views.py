@@ -52,13 +52,13 @@ def text_result(request):
     print(time_1)
     # data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list))).order_by('-date')[:10000]
     # data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list))).order_by('-date')
-    data_list = list(Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list))).order_by('-date'))
+    data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list))).order_by('-date')
     time = datetime.now()
     print(time-time_1)
     time_1 = time
 
-    # data_list = list(data_list.values('patent_id', 'title', 'abstract', 'country', 'date', 'kind', 'number'))
-    data_list = data_list.values('patent_id', 'title', 'abstract', 'country', 'date', 'kind', 'number')
+    data_list = list(data_list.values('patent_id', 'title', 'abstract', 'country', 'date', 'kind', 'number'))
+    # data_list = data_list.values('patent_id', 'title', 'abstract', 'country', 'date', 'kind', 'number')
     #data_list = data_list.values_list('patent_id', 'title', 'abstract', 'country', 'date', 'kind', 'number')
 
     patent_id_list = [data['patent_id'] for data in data_list]
