@@ -4,17 +4,20 @@ from gensim.models.word2vec import Word2Vec
 from text_search.models import Patent
 from text_search.models import PatentEmbedding
 from django.db.models import Q
+
 from django.core import serializers
 #
 # import re
 # import json
 import pickle
 import operator
+import multiprocessing
 from functools import reduce
 from datetime import datetime
 
 import numpy as np
-from sklearn.manifold import TSNE
+# from sklearn.manifold import TSNE
+from MulticoreTSNE import MulticoreTSNE as TSNE
 from sklearn.cluster import KMeans
 
 
@@ -28,7 +31,7 @@ def index(request):
 
 def wordcloud_search(request):
     search_keyword = request.GET['keyword']
-    list_search_keyword = [word.lower().strip() for word in search_keyword.split() if word!='and']
+    list_search_keyword = [word.lower().strip() for word in search_keyword.split() if word != 'and']
     try:
         similar_words = model.wv.most_similar(list_search_keyword, topn=30)
         similar_words = [{'word': w, 'size': 60 - (i * 1.5)} for i, (w, _) in enumerate(similar_words)]
@@ -40,7 +43,6 @@ def wordcloud_search(request):
 
 patent_id_list = []
 
-
 def text_result(request):
     global patent_id_list
     final_keyword = request.GET['keyword']
@@ -50,14 +52,18 @@ def text_result(request):
     print(time_1)
     # data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list))).order_by('-date')[:10000]
     # data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list))).order_by('-date')
-    data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list)))
+    data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list))).order_by('-date')
     time = datetime.now()
     print(time-time_1)
     time_1 = time
 
-    data_list = list(data_list.values('patent_id', 'title', 'abstract', 'country', 'date','kind','number'))
+    # data_list = list(data_list.values('patent_id', 'title', 'abstract', 'country', 'date', 'kind', 'number'))
+    data_list = data_list.values('patent_id', 'title', 'abstract', 'country', 'date', 'kind', 'number')
+    #data_list = data_list.values_list('patent_id', 'title', 'abstract', 'country', 'date', 'kind', 'number')
+
     patent_id_list = [data['patent_id'] for data in data_list]
-    result = {"data_list": data_list}
+
+    result = {"data_list": list(data_list)}
 
     time = datetime.now()
     print(time-time_1)
@@ -70,18 +76,36 @@ def text_result(request):
     # return HttpResponse(serialized_qs, content_type='application/json; charset=UTF-8')
 
 
-def tsne_transform(data, lr=100):
-    tsne = TSNE(learning_rate=lr)
+def tsne_transform(data, lr=100, n_jobs=-1):
+    tsne = TSNE(learning_rate=lr, n_jobs=n_jobs)
     transformed = tsne.fit_transform(data)
     return transformed[:, 0].tolist(), transformed[:, 1].tolist()
 
 
 def kmeans_clustering(data, n_cluster=10, n_jobs=-1):
     kmeans = KMeans(n_clusters=n_cluster, n_jobs=n_jobs)
-    # labels = kmeans.fit_transform(data)
-    # return labels
-    kmeans.fit_transform(data)
+    kmeans.fit(data)
     return kmeans.labels_
+
+# from tsnecuda import TSNE
+# from cuml.cluster import KMeans
+#
+#
+# def tsne_transform(data):
+#     tsne = TSNE()
+#     transformed = tsne.fit_transform(data)
+#     return transformed[:, 0].tolist(), transformed[:, 1].tolist()
+
+
+def convert_string_to_npy(data):
+    data['embedding'] = np.fromstring(data['embedding'], dtype=np.float32, sep=' ')
+    return data['patent_id'], data['embedding']
+
+
+def get_patent_embedding(query_data):
+    with multiprocessing.Pool(multiprocessing.cpu_count()) as p:
+        patent_embedding = list(p.imap(convert_string_to_npy, query_data))
+    return zip(*patent_embedding)
 
 
 def clustering_map(request):
@@ -89,38 +113,23 @@ def clustering_map(request):
     time_1 = datetime.now()
     print(time_1)
     # patent_id_list = request.GET['patent_id'].split(',')
-    patent_embedding = list(PatentEmbedding.objects.filter(patent_id__in=patent_id_list).values())
+    patent_embedding = PatentEmbedding.objects.filter(patent_id__in=patent_id_list).values()
 
     time = datetime.now()
     print(time-time_1)
 
-    patent_ids = []
-    embedding_list = []
-
-    for data in patent_embedding:
-        patent_ids.append(data['patent_id'])
-        embed = np.fromstring(data['embedding'], dtype=np.float32, sep=' ')
-        embedding_list.append(embed)
-
-        # index_ = patent_list.index(int(i))
-        # cluster_patent_id.append(int(i))
-        # cluster_embedding.append(embedding_list[index_])
+    patent_ids, embedding_list = get_patent_embedding(patent_embedding)
+    embedding_list = np.array(embedding_list)
 
     time = datetime.now()
     print(time-time_1)
-
-    # print(kmeans.labels_)
-    # print(datetime.now())
-    # df_new = pd.DataFrame()
-    # df_new['x'] = transformed[:, 0]
-    # df_new['y'] = transformed[:, 1]
 
     x_values, y_values = tsne_transform(embedding_list)
+
     time = datetime.now()
     print(time-time_1)
+
     labels = kmeans_clustering(embedding_list)
-    # labels = labels.astype(str).tolist()
-    # labels = list(map(lambda x: "cluster_"+x, labels))
     labels = list(map(lambda x: "cluster_"+str(x), labels))
 
     time = datetime.now()
@@ -131,7 +140,8 @@ def clustering_map(request):
     #
     # s_x, b_x = min(x_values), max(x_values)
     # s_y, b_y = min(y_values), max(y_values)
-    xy_value = [{'x_value': x, "y_value": y, "cluster": label} for x, y, label in zip(x_values, y_values, labels)]
+    xy_value = [{'x_value': x, "y_value": y, "cluster": label}
+                for x, y, label in zip(x_values, y_values, labels)]
 
     axis_value = {'s_x': min(x_values),
                   'b_x': max(x_values),
@@ -160,7 +170,3 @@ def clustering_map(request):
     # print(result)
     result = {'xy': xy_value, 'axis': axis_value}
     return JsonResponse(result, safe=False)
-
-
-
-
