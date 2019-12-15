@@ -43,6 +43,7 @@ def wordcloud_search(request):
 
 patent_id_list = []
 
+
 def text_result(request):
     global patent_id_list
     final_keyword = request.GET['keyword']
@@ -62,7 +63,6 @@ def text_result(request):
     #data_list = data_list.values_list('patent_id', 'title', 'abstract', 'country', 'date', 'kind', 'number')
 
     patent_id_list = [data['patent_id'] for data in data_list]
-
     result = {"data_list": data_list}
 
     time = datetime.now()
@@ -76,10 +76,10 @@ def text_result(request):
     # return HttpResponse(serialized_qs, content_type='application/json; charset=UTF-8')
 
 
-def tsne_transform(data, lr=100, n_jobs=-1):
-    tsne = TSNE(learning_rate=lr, n_jobs=n_jobs)
-    transformed = tsne.fit_transform(data)
-    return transformed[:, 0].tolist(), transformed[:, 1].tolist()
+# def tsne_transform(data, lr=100, n_jobs=-1):
+#     tsne = TSNE(learning_rate=lr, n_jobs=n_jobs)
+#     transformed = tsne.fit_transform(data)
+#     return transformed[:, 0].tolist(), transformed[:, 1].tolist()
 
 
 def kmeans_clustering(data, n_cluster=10, n_jobs=-1):
@@ -87,14 +87,22 @@ def kmeans_clustering(data, n_cluster=10, n_jobs=-1):
     kmeans.fit(data)
     return kmeans.labels_
 
-# from tsnecuda import TSNE
-# from cuml.cluster import KMeans
+
+from tsnecuda import TSNE
+from collections import defaultdict
+
+
+def tsne_transform(data):
+    tsne = TSNE()
+    transformed = tsne.fit_transform(data)
+    return transformed
+    # return transformed[:, 0].tolist(), transformed[:, 1].tolist()
+
 #
-#
-# def tsne_transform(data):
-#     tsne = TSNE()
-#     transformed = tsne.fit_transform(data)
-#     return transformed[:, 0].tolist(), transformed[:, 1].tolist()
+# def kmeans_clustering(data, n_cluster=10):
+#     kmeans = KMeans(n_clusters=n_cluster)
+#     kmeans.fit(data)
+#     return kmeans.labels_
 
 
 def convert_string_to_npy(data):
@@ -124,6 +132,26 @@ def clustering_map(request):
     time = datetime.now()
     print(time-time_1)
 
+    transformed = tsne_transform(embedding_list).tolist()
+    # return JsonResponse(transformed, safe=False)
+
+    labels = kmeans_clustering(embedding_list).tolist()
+
+    grouped_tsne = defaultdict(list)
+    for label, pid, xy in zip(labels, patent_ids, transformed):
+        grouped_tsne[label].append(xy)
+        # x, y = xy
+        # grouped_tsne[label].append({'x': x, 'y': y})
+
+    # results = []
+    # for key in range(10):
+    #     print(key, len(grouped_tsne[key]))
+    #     results.append({'label': key, 'data': grouped_tsne[key]})
+    results = [{'label': key, 'data': grouped_tsne[key]} for key in grouped_tsne]
+    return JsonResponse(results, safe=False)
+
+
+
     x_values, y_values = tsne_transform(embedding_list)
 
     time = datetime.now()
@@ -131,6 +159,7 @@ def clustering_map(request):
 
     labels = kmeans_clustering(embedding_list)
     labels = list(map(lambda x: "cluster_"+str(x), labels))
+
 
     time = datetime.now()
     print(time-time_1)
