@@ -53,7 +53,7 @@ def text_result(request):
     print(time_1)
     # data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list))).order_by('-date')[:10000]
     # data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list))).order_by('-date')
-    data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list))).order_by('-date')
+    data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list))).order_by('-date')[:10000]
     time = datetime.now()
     print(time-time_1)
     time_1 = time
@@ -76,10 +76,12 @@ def text_result(request):
     # return HttpResponse(serialized_qs, content_type='application/json; charset=UTF-8')
 
 
-# def tsne_transform(data, lr=100, n_jobs=-1):
-#     tsne = TSNE(learning_rate=lr, n_jobs=n_jobs)
-#     transformed = tsne.fit_transform(data)
-#     return transformed[:, 0].tolist(), transformed[:, 1].tolist()
+def tsne_transform(data, lr=100, n_jobs=-1):
+    tsne = TSNE(learning_rate=lr, n_jobs=n_jobs)
+    transformed = tsne.fit_transform(data)
+    return transformed
+
+    # return transformed[:, 0].tolist(), transformed[:, 1].tolist()
 
 
 def kmeans_clustering(data, n_cluster=10, n_jobs=-1):
@@ -88,15 +90,15 @@ def kmeans_clustering(data, n_cluster=10, n_jobs=-1):
     return kmeans.labels_
 
 
-from tsnecuda import TSNE
+# from tsnecuda import TSNE
 from collections import defaultdict
 
-
-def tsne_transform(data):
-    tsne = TSNE()
-    transformed = tsne.fit_transform(data)
-    return transformed
-    # return transformed[:, 0].tolist(), transformed[:, 1].tolist()
+#
+# def tsne_transform(data):
+#     tsne = TSNE()
+#     transformed = tsne.fit_transform(data)
+#     return transformed
+#     # return transformed[:, 0].tolist(), transformed[:, 1].tolist()
 
 #
 # def kmeans_clustering(data, n_cluster=10):
@@ -135,67 +137,81 @@ def clustering_map(request):
     transformed = tsne_transform(embedding_list).tolist()
     # return JsonResponse(transformed, safe=False)
 
+    time = datetime.now()
+    print(time-time_1)
+
     labels = kmeans_clustering(embedding_list).tolist()
+
+    time = datetime.now()
+    print(time-time_1)
 
     grouped_tsne = defaultdict(list)
     for label, pid, xy in zip(labels, patent_ids, transformed):
         grouped_tsne[label].append(xy)
         # x, y = xy
         # grouped_tsne[label].append({'x': x, 'y': y})
-
     # results = []
     # for key in range(10):
     #     print(key, len(grouped_tsne[key]))
     #     results.append({'label': key, 'data': grouped_tsne[key]})
-    results = [{'label': key, 'data': grouped_tsne[key]} for key in grouped_tsne]
+    time = datetime.now()
+    print(time-time_1)
+    if len(patent_id_list)<1000:
+        size_data = 8
+    elif 1000<=len(patent_id_list)<5000:
+        size_data = 6
+    else:
+        size_data = 5
+    print(size_data)
+    results = [{'label': key, 'data': grouped_tsne[key], 'size_data':size_data} for key in grouped_tsne]
     return JsonResponse(results, safe=False)
 
 
 
-    x_values, y_values = tsne_transform(embedding_list)
-
-    time = datetime.now()
-    print(time-time_1)
-
-    labels = kmeans_clustering(embedding_list)
-    labels = list(map(lambda x: "cluster_"+str(x), labels))
-
-
-    time = datetime.now()
-    print(time-time_1)
-
-    # x_values = transformed[:, 0].tolist()
-    # y_values = transformed[:, 1].tolist()
-    #
-    # s_x, b_x = min(x_values), max(x_values)
-    # s_y, b_y = min(y_values), max(y_values)
-    xy_value = [{'x_value': x, "y_value": y, "cluster": label}
-                for x, y, label in zip(x_values, y_values, labels)]
-
-    axis_value = {'s_x': min(x_values),
-                  'b_x': max(x_values),
-                  's_y': min(y_values),
-                  'b_y': max(y_values)}
-
-    # b_x = max(transformed[:, 0]).tolist()
-    # s_x = min(transformed[:, 0]).tolist()
-    # b_y = max(transformed[:, 1]).tolist()
-    # s_y = min(transformed[:, 1]).tolist()
-
-    time = datetime.now()
-    print(time-time_1)
-# <<<<<<< HEAD
-#     # print(data_list)
-#     return JsonResponse(data_list, safe=False)
-# =======
-    # result = {"x_value" : transformed[:, 0].tolist(),
-    #             "y_value" : transformed[:, 1].tolist()}
-    # print(type(result['x_value'].tolist()[0]))
-    # print(result)
-    # result = serialize('json', result)
-    # result = json.dumps(result, cls=NumpyEncoder)
-    # result = json.dumps(str(result))
-    # result = serializers.serialize("json", result)
-    # print(result)
-    result = {'xy': xy_value, 'axis': axis_value}
-    return JsonResponse(result, safe=False)
+#     x_values, y_values = tsne_transform(embedding_list)
+#
+#     time = datetime.now()
+#     print(time-time_1)
+#
+#     labels = kmeans_clustering(embedding_list)
+#     labels = list(map(lambda x: "cluster_"+str(x), labels))
+#
+#
+#     time = datetime.now()
+#     print(time-time_1)
+#
+#     # x_values = transformed[:, 0].tolist()
+#     # y_values = transformed[:, 1].tolist()
+#     #
+#     # s_x, b_x = min(x_values), max(x_values)
+#     # s_y, b_y = min(y_values), max(y_values)
+#     xy_value = [{'x_value': x, "y_value": y, "cluster": label}
+#                 for x, y, label in zip(x_values, y_values, labels)]
+#
+#     axis_value = {'s_x': min(x_values),
+#                   'b_x': max(x_values),
+#                   's_y': min(y_values),
+#                   'b_y': max(y_values)}
+#
+#     # b_x = max(transformed[:, 0]).tolist()
+#     # s_x = min(transformed[:, 0]).tolist()
+#     # b_y = max(transformed[:, 1]).tolist()
+#     # s_y = min(transformed[:, 1]).tolist()
+#
+#     time = datetime.now()
+#     print(time-time_1)
+# # <<<<<<< HEAD
+# #     # print(data_list)
+# #     return JsonResponse(data_list, safe=False)
+# # =======
+#     # result = {"x_value" : transformed[:, 0].tolist(),
+#     #             "y_value" : transformed[:, 1].tolist()}
+#     # print(type(result['x_value'].tolist()[0]))
+#     # print(result)
+#     # result = serialize('json', result)
+#     # result = json.dumps(result, cls=NumpyEncoder)
+#     # result = json.dumps(str(result))
+#     # result = serializers.serialize("json", result)
+#     # print(result)
+#     result = {'xy': xy_value, 'axis': axis_value}
+#     return JsonResponse(result, safe=False)

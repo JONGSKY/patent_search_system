@@ -22,7 +22,7 @@ $('#submit_keyword').click(function () {
                     alert(' 죄송합니다. \n 해당 검색어로는 wordcloud 제작이 어렵습니다! \n 다른 검색어로 검색해주세요');
                 } else {
                     $('#result_section').css('display', 'none');
-                    $('#result_pagination').css('display', 'none');
+                    $('#map_section').css('display', 'none');
                     $('#wordcloud_section').css('display', 'block');
                     createWordCloud(myWords);
 

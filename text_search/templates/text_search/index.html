@@ -41,7 +41,49 @@
         text:hover {
             stroke: black;
         }
+
+        .wrap-loading{ /*화면 전체를 어둡게 합니다.*/
+
+    position: fixed;
+
+    left:0;
+
+    right:0;
+
+    top:0;
+
+    bottom:0;
+
+    background: rgba(0,0,0,0.2); /*not in ie */
+
+    filter: progid:DXImageTransform.Microsoft.Gradient(startColorstr='#20000000',endColorstr='#20000000');    /* ie */
+
+
+
+}
+
+    .wrap-loading div{ /*로딩 이미지*/
+
+        position: fixed;
+
+        top:50%;
+
+        left:50%;
+
+        margin-left: -21px;
+
+        margin-top: -21px;
+
+    }
+
+    .display-none{ /*감추기*/
+
+        display:none;
+
+    }
+
     </style>
+
 {% endblock %}
 
 {% block home_url %}
@@ -88,50 +130,57 @@
         </div>
     </section>
 
-    <section class="page-section" id="map_section">
+    <section class="page-section" id="map_section" style="display: none;">
         <div class="container">
             <h2 class="text-center mt-0">Clustering</h2>
             <hr class="divider my-4">
-            <div class="col-sm-1 col-md-2"></div>
+<!--            <div class="col-sm-1 col-md-2"></div>-->
             <div id="my_dataviz" class="container col-sm-9, col-md-8">
                 <div id="chart_div" style="width: 900px; height: 500px;"></div>
                 {#                <canvas id="myChart" width="400" height="400"></canvas>#}
 
             </div>
-            <div class="col-sm-1 col-md-2"></div>
+<!--            <div class="col-sm-1 col-md-2"></div>-->
         </div>
     </section>
 
-    <section class="page-section" id="result_section">
-{#             style="display: none;">#}
+    <section class="page-section" id="result_section" style="display: none;">
         <div id='result_div' class="container">
             <h2 class="text-center mt-0">Results</h2>
             <hr class="divider my-4">
 
-            <table id="result_table" class="display" style="width:100%">
-                <thead>
-                <tr>
-                    <th></th>
-                    <th>patent_id</th>
-                    <th>title</th>
-                    <th>country</th>
-                    <th>date</th>
-                    <th>site</th>
-                </tr>
-                </thead>
-                <tfoot>
-                <tr>
-                    <th></th>
-                    <th>patent_id</th>
-                    <th>title</th>
-                    <th>country</th>
-                    <th>date</th>
-                    <th>site</th>
-                </tr>
-                </tfoot>
-            </table>
+<!--            <table id="result_table" class="display" style="width:100%">-->
+<!--                <thead>-->
+<!--                <tr>-->
+<!--                    <th></th>-->
+<!--                    <th>patent_id</th>-->
+<!--                    <th>title</th>-->
+<!--                    <th>country</th>-->
+<!--                    <th>date</th>-->
+<!--                    <th>site</th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tfoot>-->
+<!--                <tr>-->
+<!--                    <th></th>-->
+<!--                    <th>patent_id</th>-->
+<!--                    <th>title</th>-->
+<!--                    <th>country</th>-->
+<!--                    <th>date</th>-->
+<!--                    <th>site</th>-->
+<!--                </tr>-->
+<!--                </tfoot>-->
+<!--            </table>-->
         </div>
     </section>
 
     <div id='footer'></div>
+
+<div class="wrap-loading display-none">
+
+    <div><img src="{% static 'text_search/ajax-loader.gif' %}" /></div>
+
+</div>
+
+
 {% endblock %}

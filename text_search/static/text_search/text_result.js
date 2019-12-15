@@ -5,7 +5,7 @@ function format(d) {
 //        '<h5 style="display: inline;">Title</h5>: '+d.title+'<br>'+
 }
 
-const color = ["#55efc4", "#81ecec", "#74b9ff", "#a29bfe", "#dfe6e9", "#ffeaa7", "#fab1a0", "#ff7675", "#fd79a8", "#636e72"];
+const color = ["#FF0000", "#FF5E00", "#FFE400", "#1DDB16", "#00D8FF", "#0054FF", "#5F00FF", "#FF00DD", "#785D12", "#B3AEFF"];
 
 // 키워드 + 추가키워드로 검색결과 확인하기
 $('#search_patent').click(function () {
@@ -24,19 +24,22 @@ $('#search_patent').click(function () {
             url: 'text_result',
             data: {'keyword': keywords},
             beforeSend: function () {
-                $('html').css("cursor", "wait");
+                // $('html').css("cursor", "wait");
                 $('#keyword_list').css('display', 'none');
+                $('.wrap-loading').removeClass('display-none');
             },
             complete: function () {
                 //통신이 완료된 후 처리되는 함수
                 $('#keyword_list').css('display', '');
-                $('html').css("cursor", "auto");
+                // $('html').css("cursor", "auto");
+                // $('.wrap-loading').addClass('display-none');
             },
             success: function (result) {
                 if (result === "") {
                     alert(' 죄송합니다. \n 해당 검색어로는 result 결과물이 없습니다! \n 다른 검색어로 검색해주세요');
                 } else {
                     $('#wordcloud_section').css('display', 'none');
+                    $('#map_section').css('display', 'block');
                     $('#result_section').css('display', 'block');
                     $('#result_pagination').css('display', 'block');
                     $('#search_keyword').val(keywords);
@@ -151,13 +154,13 @@ $('#search_patent').click(function () {
                         // data: {'patent_id': JSON.stringify(result['patent_id_list'].slice(1, 5000)) },
                         // data: "",
                         beforeSend: function () {
-                            $('html').css("cursor", "wait");
-                            // $('#keyword_list').css('display', 'none');
+                            // $('html').css("cursor", "wait");
+                            // $('.wrap-loading').removeClass('display-none');
                         },
                         complete: function () {
                             //통신이 완료된 후 처리되는 함수
-                            // $('#keyword_list').css('display', '');
-                            $('html').css("cursor", "auto");
+                            // $('html').css("cursor", "auto");
+                            $('.wrap-loading').addClass('display-none');
                         },
                         success: function (result) {
                             var data = [];
@@ -167,9 +170,10 @@ $('#search_patent').click(function () {
                                     type: 'scatter',
                                     data: item['data'],
                                     dimensions: ['x', 'y'],
-                                    symbolSize: 2,
+                                    symbolSize: item['size_data'],
                                     itemStyle: {
-                                        opacity: 0.2
+                                        opacity: 0.4,
+                                        color: color[index],
                                     },
                                     large: true,
                                 };
@@ -193,7 +197,6 @@ $('#search_patent').click(function () {
                                 animation: false,
                                 series : data
                             };
-
                             myChart.setOption(option);
                         }
                     })
