@@ -58,12 +58,11 @@ def text_result(request):
     print(time-time_1)
     time_1 = time
 
-    # data_list = list(data_list.values('patent_id', 'title', 'abstract', 'country', 'date', 'kind', 'number'))
     data_list = list(data_list.values('patent_id', 'title', 'abstract', 'country', 'date', 'kind', 'number'))
+    # data_list = data_list.values('patent_id', 'title', 'abstract', 'country', 'date', 'kind', 'number')
     #data_list = data_list.values_list('patent_id', 'title', 'abstract', 'country', 'date', 'kind', 'number')
 
     patent_id_list = [data['patent_id'] for data in data_list]
-    #
     result = {"data_list": data_list}
 
     time = datetime.now()
