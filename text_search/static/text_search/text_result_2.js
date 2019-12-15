@@ -5,8 +5,6 @@ function format(d) {
 //        '<h5 style="display: inline;">Title</h5>: '+d.title+'<br>'+
 }
 
-const color = ["#55efc4", "#81ecec", "#74b9ff", "#a29bfe", "#dfe6e9", "#ffeaa7", "#fab1a0", "#ff7675", "#fd79a8", "#636e72"];
-
 // 키워드 + 추가키워드로 검색결과 확인하기
 $('#search_patent').click(function () {
     var keywords = $('#search_keyword').val().trim();
@@ -33,6 +31,7 @@ $('#search_patent').click(function () {
                 $('html').css("cursor", "auto");
             },
             success: function (result) {
+                console.log(result);
                 if (result === "") {
                     alert(' 죄송합니다. \n 해당 검색어로는 result 결과물이 없습니다! \n 다른 검색어로 검색해주세요');
                 } else {
@@ -71,6 +70,7 @@ $('#search_patent').click(function () {
                     );
 
                     var dt = $('#result_table').DataTable({
+                        // destroy: true,
                         data: result['data_list'],
                         columns: [
                             {
@@ -127,6 +127,7 @@ $('#search_patent').click(function () {
 
 
                     $(document).ready(function () {
+
                         /* Column별 검색기능 추가 */
                         $('#result_table_filter').prepend('<select id="select"></select>');
                         $('#result_table > thead > tr').children().each(function (indexInArray, valueOfElement) {
@@ -143,6 +144,27 @@ $('#search_patent').click(function () {
 
                     });
 
+                    var offset = $("#result_section").offset();
+                    $('html, body').animate({scrollTop: offset.top}, 400);
+
+
+// console.log(result['patent_id_list'].slice(1, 10));
+
+                    // set the dimensions and margins of the graph
+                    var margin = {top: 10, right: 30, bottom: 30, left: 60},
+                        width = 800 - margin.left - margin.right,
+                        height = 600 - margin.top - margin.bottom;
+
+// append the svg object to the body of the page
+                    var svg = d3.select("#my_dataviz")
+                        .append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform",
+                            "translate(" + margin.left + "," + margin.top + ")");
+
+//Read the data
 
                     $.ajax({
                         method: "GET",
@@ -160,41 +182,125 @@ $('#search_patent').click(function () {
                             $('html').css("cursor", "auto");
                         },
                         success: function (result) {
-                            var data = [];
-                            $.each(result, function(index, item){
-                                var cluster = {
-                                    name: "cluster_" + item['label'],
-                                    type: 'scatter',
-                                    data: item['data'],
-                                    dimensions: ['x', 'y'],
-                                    symbolSize: 2,
-                                    itemStyle: {
-                                        opacity: 0.2
-                                    },
-                                    large: true,
-                                };
-                                data.push(cluster);
-                            });
+                            var data = result['xy'];
+                            var axis = result['axis'];
+                            //    clustering 과정
+                            // alert(data['x_value']);
+                            //
+                            // var obj =  $.parseJSON(data);
+                            //     var obj_1 = eval(data);
+                            //     alert(obj);
+                            //     var obj_2 = JSON.parse(data);
+                            //     alert(obj_2);
+                            //     console.log(jQuery.type(obj));
+                            //     console.log(obj);
+                            //     console.log(jQuery.type(obj_2));
 
-                            var myChart = echarts.init(document.getElementById('chart_div'));
-                            var option = {
-                                title: {
-                                    text: 'Patent Landscape'
-                                },
-                                tooltip: {},
-                                legend: {
-                                    orient: 'vertical',
-                                    right: 10
-                                },
-                                xAxis: [{
-                                }],
-                                yAxis: [{
-                                }],
-                                animation: false,
-                                series : data
+                            // d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/iris.csv", function (data) {
+                            //     console.log(data);
+                            // Add X axis
+                            var x = d3.scaleLinear()
+                                // .domain([10, 100])
+                                .domain([axis['s_x']-10, axis['b_x']+10])
+                                .range([0, width]);
+                            svg.append("g")
+                                .attr("transform", "translate(0," + height + ")")
+                                .call(d3.axisBottom(x));
+
+                            // Add Y axis
+                            var y = d3.scaleLinear()
+                                .domain([axis['s_y']-10, axis['b_y']+10])
+                                .range([height, 0]);
+                            svg.append("g")
+                                .call(d3.axisLeft(y));
+
+                            // Color scale: give me a specie name, I return a color
+
+                            const color = d3.scaleOrdinal()
+                                .domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+                                .range(["#55efc4", "#81ecec", "#74b9ff", "#a29bfe", "#dfe6e9", "#ffeaa7", "#fab1a0", "#ff7675", "#fd79a8", "#636e72"]);
+
+
+                            // Highlight the specie that is hovered
+                            var highlight = function (d) {
+                                selected_specie = d.cluster;
+
+                                d3.selectAll(".dot")
+                                    .transition()
+                                    .duration(100)
+                                    .style("fill", "lightgrey")
+                                    .attr("r", 3);
+
+                                d3.selectAll("." + selected_specie)
+                                    .transition()
+                                    .duration(100)
+                                    .style("fill", color(selected_specie))
+                                    .attr("r", 7)
                             };
 
-                            myChart.setOption(option);
+                            // Highlight the specie that is hovered
+                            var doNotHighlight = function () {
+                                d3.selectAll(".dot")
+                                    .transition()
+                                    .duration(100)
+                                    .style("fill", function (d) {
+                                            return color(d.cluster)
+                                        }
+                                    )
+                                    .attr("r", 5)
+                            };
+
+                            // Add dots
+                            svg.append('g')
+                                .selectAll("dot")
+                                .data(data)
+                                .enter()
+                                .append("circle")
+                                // .attr("name", function (d) {
+                                //     return "clustering_" + d.Species
+                                // })
+                                .attr("class", function (d) {
+                                    return "dot " + d.cluster
+                                })
+                                .attr("cx", function (d) {
+                                    // alert(d.Sepal_Length);
+                                    return x(d.x_value);
+                                })
+                                .attr("cy", function (d) {
+                                    return y(d.y_value);
+                                })
+                                .attr("r", 5)
+                                .style("fill", function (d) {
+                                    return color(d.cluster)
+                                })
+                                .on("mouseover", highlight)
+                                .on("mouseleave", doNotHighlight)
+
+                            // .on("click", function (d) {
+                            //     alert(d.Species);
+                            //
+                            //     $.ajax({
+                            //         method: "GET",
+                            //         url: 'text_result',
+                            //         data: {'keyword': keywords},
+                            //         beforeSend: function () {
+                            //             $('html').css("cursor", "wait");
+                            //             $('#keyword_list').css('display', 'none');
+                            //         },
+                            //         complete: function () {
+                            //             //통신이 완료된 후 처리되는 함수
+                            //             $('#keyword_list').css('display', '');
+                            //             $('html').css("cursor", "auto");
+                            //         },
+                            //         success: function (data) {
+                            //
+                            //
+                            //         }
+                            //     })
+                            //
+                            // })
+                            // })
+                            //    여기까
                         }
                     })
                 }
@@ -203,73 +309,7 @@ $('#search_patent').click(function () {
     }
 });
 
-// var cluster = {
-//     label: item['label'],
-//     data: item['data'],
-//     borderColor: color[index],
-//     backgroundColor: color[index],
-// };
-// cluster_values.push(cluster);
 
-//
-// var ctx = document.getElementById('myChart');
-// var scatterChart = new Chart(ctx, {
-//     type: 'scatter',
-//     data: {datasets: cluster_values},
-//     options: {
-//         tooltips: {
-//             enabled: false
-//         },
-//         animation: {
-//             duration: 0 // general animation time
-//         },
-//         hover: {
-//             animationDuration: 0 // duration of animations when hovering an item
-//         },
-//         responsiveAnimationDuration: 0,
-//         scales: {
-//             x: {
-//                 type: 'linear',
-//                 position: 'bottom'
-//             }
-//         }
-//     }
-// });
-
-
-
-//
-// var ctx = document.getElementById('myChart');
-// var scatterChart = new Chart(ctx, {
-//     type: 'scatter',
-//     data: {
-//         datasets: [
-//             {'label': 'Scatter Dataset, Scatter Dataset',
-//                 borderColor: '#123451',
-//                 backgroundColor: '#123451',
-//                 'data':
-//                     [{x: -10, y: 0},
-//                         {x: 0, y: 10},
-//                         {x: 10, y: 5}]},
-//             {label: 'Scatter Dataset 2',
-//                 borderColor: '#b30008',
-//                 backgroundColor: '#b30008',
-//                 data:
-//                     [{x: -5, y: 1},
-//                         {x: 2, y: 10},
-//                         {x: 1, y: 2}]}
-//         ]
-//     },
-//     options: {
-//         scales: {
-//             x: {
-//                 type: 'linear',
-//                 position: 'bottom'
-//             }
-//         }
-//     }
-// });
-//
 
 
 
@@ -440,5 +480,3 @@ $('#search_patent').click(function () {
 //         })
 //     }
 // });
-
-// https://python-graph-gallery.com/134-how-to-avoid-overplotting-with-python/
