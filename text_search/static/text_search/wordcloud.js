@@ -26,9 +26,8 @@ $('#submit_keyword').click(function () {
                     $('#wordcloud_section').css('display', 'block');
                     createWordCloud(myWords);
 
-                    // var offset = $("#wordcloud_section").offset();
-                    // $('html, body').animate({scrollTop : offset.top}, 400);
-
+                    var offset = $("#wordcloud_section").offset();
+                    $('html, body').animate({scrollTop: offset.top}, 400);
                 }
             }
         })

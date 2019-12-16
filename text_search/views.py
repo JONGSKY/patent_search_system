@@ -53,7 +53,7 @@ def text_result(request):
     print(time_1)
     # data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list))).order_by('-date')[:10000]
     # data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list))).order_by('-date')
-    data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list))).order_by('-date')[:10000]
+    data_list = Patent.objects.filter(reduce(operator.and_, (Q(abstract__contains=k) for k in keyword_list))).order_by('-date')[:100]
     time = datetime.now()
     print(time-time_1)
     time_1 = time
@@ -118,8 +118,9 @@ def get_patent_embedding(query_data):
     return zip(*patent_embedding)
 
 
-def clustering_map(request):
+def clustering_map(response):
     global patent_id_list
+    global data_list
     time_1 = datetime.now()
     print(time_1)
     # patent_id_list = request.GET['patent_id'].split(',')
@@ -127,27 +128,34 @@ def clustering_map(request):
 
     time = datetime.now()
     print(time-time_1)
+    time_1 = time
 
     patent_ids, embedding_list = get_patent_embedding(patent_embedding)
     embedding_list = np.array(embedding_list)
 
     time = datetime.now()
     print(time-time_1)
+    time_1 = time
 
     transformed = tsne_transform(embedding_list).tolist()
     # return JsonResponse(transformed, safe=False)
 
     time = datetime.now()
     print(time-time_1)
+    time_1 = time
 
     labels = kmeans_clustering(embedding_list).tolist()
 
     time = datetime.now()
     print(time-time_1)
+    time_1 = time
 
     grouped_tsne = defaultdict(list)
+    data_list = defaultdict(list)
+
     for label, pid, xy in zip(labels, patent_ids, transformed):
         grouped_tsne[label].append(xy)
+        data_list["cluster_"+str(label)].append(pid)
         # x, y = xy
         # grouped_tsne[label].append({'x': x, 'y': y})
     # results = []
@@ -156,13 +164,13 @@ def clustering_map(request):
     #     results.append({'label': key, 'data': grouped_tsne[key]})
     time = datetime.now()
     print(time-time_1)
+    time_1 = time
     if len(patent_id_list)<1000:
-        size_data = 8
+        size_data = 10
     elif 1000<=len(patent_id_list)<5000:
-        size_data = 6
+        size_data = 8
     else:
         size_data = 5
-    print(size_data)
     results = [{'label': key, 'data': grouped_tsne[key], 'size_data':size_data} for key in grouped_tsne]
     return JsonResponse(results, safe=False)
 
@@ -215,3 +223,28 @@ def clustering_map(request):
 #     # print(result)
 #     result = {'xy': xy_value, 'axis': axis_value}
 #     return JsonResponse(result, safe=False)
+
+def change_data_table(request):
+    global data_list
+    time_1 = datetime.now()
+    print(time_1)
+    index = request.GET['index']
+
+    table_list = Patent.objects.filter(patent_id__in=data_list[index]).order_by('-date')
+
+    time = datetime.now()
+    print(time-time_1)
+    time_1 = time
+
+    table_list = list(table_list.values('patent_id', 'title', 'abstract', 'country', 'date', 'kind', 'number'))
+
+    time = datetime.now()
+    print(time-time_1)
+    time_1 = time
+
+    result = {"table_list": table_list}
+
+    time = datetime.now()
+    print(time-time_1)
+
+    return JsonResponse(result, safe=False)
