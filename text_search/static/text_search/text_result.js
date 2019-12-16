@@ -93,7 +93,7 @@ $('#search_patent').click(function () {
                                 }
                             }
                         ],
-                        "order": [[1, 'asc']]
+                        "order": [[4, 'desc']]
                     });
 
                     // Array to track the ids of the details displayed rows
@@ -167,7 +167,7 @@ $('#search_patent').click(function () {
                             var data = [];
                             $.each(result, function (index, item) {
                                 var cluster = {
-                                    name: "cluster_" + item['label'],
+                                    name: item['label'],
                                     type: 'scatter',
                                     data: item['data'],
                                     dimensions: ['x', 'y'],
@@ -189,14 +189,17 @@ $('#search_patent').click(function () {
                                 },
                                 tooltip: {},
                                 legend: {
+                                    type: 'scroll',
                                     orient: 'vertical',
-                                    right: 10
+                                    // bottom:0
+                                    right: 0
                                 },
                                 xAxis: [{}],
                                 yAxis: [{}],
                                 animation: false,
                                 series: data
                             };
+
                             myChart.on('click', function (params) {
                                 $.ajax({
                                     method: "GET",
@@ -269,7 +272,7 @@ $('#search_patent').click(function () {
                                                     }
                                                 }
                                             ],
-                                            "order": [[1, 'asc']]
+                                            "order": [[4, 'desc']]
                                         });
 
                                         // Array to track the ids of the details displayed rows

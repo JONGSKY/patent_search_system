@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from gensim.models.word2vec import Word2Vec
-from text_search.models import Patent
+from text_search.models import Patentsview as Patent
 from text_search.models import PatentEmbedding
+from text_search.models import PatentTextNgram
 from django.db.models import Q
-
+from text_search.utils import *
 from django.core import serializers
 #
 # import re
@@ -58,7 +59,7 @@ def text_result(request):
     print(time-time_1)
     time_1 = time
 
-    data_list = list(data_list.values('patent_id', 'title', 'abstract', 'country', 'date', 'kind', 'number'))
+    data_list = list(data_list.values())
     # data_list = data_list.values('patent_id', 'title', 'abstract', 'country', 'date', 'kind', 'number')
     #data_list = data_list.values_list('patent_id', 'title', 'abstract', 'country', 'date', 'kind', 'number')
 
@@ -106,16 +107,43 @@ from collections import defaultdict
 #     kmeans.fit(data)
 #     return kmeans.labels_
 
-
-def convert_string_to_npy(data):
-    data['embedding'] = np.fromstring(data['embedding'], dtype=np.float32, sep=' ')
-    return data['patent_id'], data['embedding']
-
-
-def get_patent_embedding(query_data):
-    with multiprocessing.Pool(multiprocessing.cpu_count()) as p:
-        patent_embedding = list(p.imap(convert_string_to_npy, query_data))
-    return zip(*patent_embedding)
+#
+# def convert_string_to_npy(data):
+#     data['embedding'] = np.fromstring(data['embedding'], dtype=np.float32, sep=' ')
+#     return data['patent_id'], data['embedding']
+#
+#
+# def get_patent_embedding(query_data):
+#     with multiprocessing.Pool(multiprocessing.cpu_count()) as p:
+#         patent_embedding = list(p.imap(convert_string_to_npy, query_data))
+#     return zip(*patent_embedding)
+#
+#
+# def convert_string_to_list(data):
+#     return data['embedding'].split(", ")
+#
+#
+# def get_patent_ngram(query_data):
+#     with multiprocessing.Pool(multiprocessing.cpu_count()) as p:
+#         patent_ngram = list(p.imap(convert_string_to_list, query_data))
+#     return patent_ngram
+#
+#
+# from sklearn.feature_extraction.text import TfidfVectorizer
+#
+#
+# tfidf = TfidfVectorizer(
+#     analyzer= 'word',
+#     tokenizer=lambda x: x,
+#     preprocessor=lambda x: x,
+#     token_pattern=None,
+#     min_df=0.05, max_df=0.95)
+#
+#
+# def get_keywords_using_tfidf(corpus):
+#     X = tfidf.fit_transform(corpus)
+#     keyword_list = np.array(tfidf.get_feature_names())
+#     return keyword_list[np.argsort(np.sum(X.toarray(), axis=0))[-5:]].tolist()
 
 
 def clustering_map(response):
@@ -144,6 +172,8 @@ def clustering_map(response):
     print(time-time_1)
     time_1 = time
 
+
+
     labels = kmeans_clustering(embedding_list).tolist()
 
     time = datetime.now()
@@ -154,10 +184,43 @@ def clustering_map(response):
     data_list = defaultdict(list)
 
     for label, pid, xy in zip(labels, patent_ids, transformed):
-        grouped_tsne[label].append(xy)
+        grouped_tsne["cluster_"+str(label)].append(xy)
         data_list["cluster_"+str(label)].append(pid)
         # x, y = xy
         # grouped_tsne[label].append({'x': x, 'y': y})
+
+
+    _grouped_tsne = {}
+    _data_list = {}
+
+    for key, patents in data_list.items():
+        query_ngram = PatentTextNgram.objects.filter(patent_id__in=patents).values()
+        patent_ngram = get_patent_ngram(query_ngram)
+        keywords = get_keywords_using_tfidf(patent_ngram)
+        keywords = ",".join(keywords)
+
+        _grouped_tsne[keywords] = grouped_tsne[key]
+        _data_list[keywords] = data_list[key]
+
+    grouped_tsne = _grouped_tsne
+    data_list = _data_list
+
+    del _grouped_tsne
+    del _data_list
+    #
+    #     print(keywords)
+    #
+    #
+    # for label, key, patents in zip(labels, data_list.items()):
+    #     query_ngram = PatentTextNgram.objects.filter(patent_id__in=patents).values()
+    #     patent_ngram = get_patent_ngram(query_ngram)
+    #     keywords = get_keywords_using_tfidf(patent_ngram)
+    #     keywords = ", ".join(keywords)
+    #     grouped_tsne[keywords] = grouped_tsne.pop(label)
+    #     print(keywords)
+
+
+
     # results = []
     # for key in range(10):
     #     print(key, len(grouped_tsne[key]))
@@ -224,6 +287,7 @@ def clustering_map(response):
 #     result = {'xy': xy_value, 'axis': axis_value}
 #     return JsonResponse(result, safe=False)
 
+
 def change_data_table(request):
     global data_list
     time_1 = datetime.now()
@@ -236,7 +300,7 @@ def change_data_table(request):
     print(time-time_1)
     time_1 = time
 
-    table_list = list(table_list.values('patent_id', 'title', 'abstract', 'country', 'date', 'kind', 'number'))
+    table_list = list(table_list.values())
 
     time = datetime.now()
     print(time-time_1)
@@ -246,5 +310,4 @@ def change_data_table(request):
 
     time = datetime.now()
     print(time-time_1)
-
     return JsonResponse(result, safe=False)
