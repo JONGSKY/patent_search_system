@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from gensim.models.word2vec import Word2Vec
 from text_search.models import Patentsview as Patent
 from text_search.models import PatentEmbedding
-from text_search.models import PatentTextNgram
+from text_search.models import PatentNgram
 from django.db.models import Q
 from text_search.utils import *
 from django.core import serializers
@@ -85,7 +85,7 @@ def tsne_transform(data, lr=100, n_jobs=-1):
     # return transformed[:, 0].tolist(), transformed[:, 1].tolist()
 
 
-def kmeans_clustering(data, n_cluster=10, n_jobs=-1):
+def kmeans_clustering(data, n_cluster=9, n_jobs=-1):
     kmeans = KMeans(n_clusters=n_cluster, n_jobs=n_jobs)
     kmeans.fit(data)
     return kmeans.labels_
@@ -194,10 +194,10 @@ def clustering_map(response):
     _data_list = {}
 
     for key, patents in data_list.items():
-        query_ngram = PatentTextNgram.objects.filter(patent_id__in=patents).values()
+        query_ngram = PatentNgram.objects.filter(patent_id__in=patents).values()
         patent_ngram = get_patent_ngram(query_ngram)
         keywords = get_keywords_using_tfidf(patent_ngram)
-        keywords = ",".join(keywords)
+        keywords = ",".join(keywords).replace(',','\n')
 
         _grouped_tsne[keywords] = grouped_tsne[key]
         _data_list[keywords] = data_list[key]
