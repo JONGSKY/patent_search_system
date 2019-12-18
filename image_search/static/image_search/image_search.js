@@ -13,6 +13,7 @@ $("#profile-img").change(function(){
     $(this).siblings('.custom-file-label').addClass('selected').html(fileName);
 });
 
+
 function upload(event) {
     event.preventDefault();
     var data = new FormData($('#image_form').get(0));
@@ -30,7 +31,7 @@ function upload(event) {
                     '<div class="card card-flip h-100">' +
                     '<div class="card-front">' +
                     '<div class="card-body">' +
-                    '<img src="https://via.placeholder.com/300" class="card-img-top">\n' +
+                    '<img class="card-image" src="/media/' + item.image_src +'" onerror="this.onerror=null; this.src=\'/static/image_search/images/default.png\'">\n' +
                     '<hr>\n' +
                     '<h5 class="card-title">Patent ID : ' + item.patent_id + '</h5>\n' +
                     '</div>\n' +
@@ -42,7 +43,7 @@ function upload(event) {
                     '<hr>\n' +
                     '<p class="card-text">' + item.abstract.slice(0, 170 - item.title.length) + '...' + '</p>\n' +
                     '<hr>\n' +
-                    '<a href="#" class="btn btn-primary">Go somewhere</a>\n' +
+                    '<a target="_blank" href="http://patents.google.com/patent/US' + item.patent_id + '" class="btn btn-primary">Google Patents</a>\n' +
                     '</div>\n' +
                     '</div>\n' +
                     '</div>\n' +
