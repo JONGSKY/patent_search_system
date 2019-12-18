@@ -13,15 +13,24 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 import json
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+with open('information.json') as json_file:
+    json_data = json.load(json_file)
+    host_ = json_data['host']
+    user_ = json_data['user']
+    password_ = json_data['password']
+    port_ = json_data['port']
+    database_ = json_data['database']
+    secret_key = json_data['secret_key']
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'hr^auw_he50_6_rhkd$h_20ng&m$0@mlwg8v%exfrp4z)skll3'
+SECRET_KEY = secret_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -78,14 +87,6 @@ WSGI_APPLICATION = 'patent_search_system.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
-with open('database.json') as json_file:
-    json_data = json.load(json_file)
-    host_ = json_data['host']
-    user_ = json_data['user']
-    password_ = json_data['password']
-    port_ = json_data['port']
-    database_ = json_data['database']
 
 DATABASES = {
     'default': {
