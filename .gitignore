@@ -3,8 +3,8 @@
 
 .DS_Store
 
-# information of database
-database.json
+# information of data
+information.json
 
 # model
 word2vec.model
