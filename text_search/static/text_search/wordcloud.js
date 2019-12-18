@@ -85,10 +85,6 @@ function draw(words) {
         })
         .on("click", function (d) {
             var ctr = d.text;
-            // var keyword_tag = '<div class="col-xs-1 form-inline add_keyword_group">' +
-            //     '<input name="add_keyword" class="form-control keywords" style="background-color:#D9E5FF; color:#6799FF; margin:10px 5px 10px 5px" type="text" value=' + ctr + '>' +
-            //     '<div class="input-group-append div_add_keyword"><button class="btn btn-primary button_add_keyword" type="button"><i class="fa fa-times"></i></button></div>';
-
             var keyword_tag = '<div class="input-group form-inline col-3 add_keyword_group" style="margin-top: 5px;">\n' +
                 '    <input type="text" name="add_keyword" class="form-control keywords" value="' + ctr + '">\n' +
                 '    <div class="input-group-append div_add_keyword">\n' +

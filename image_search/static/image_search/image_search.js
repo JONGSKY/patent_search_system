@@ -7,7 +7,8 @@ function readURL(input) {
         reader.readAsDataURL(input.files[0]);
     }
 }
-$("#profile-img").change(function(){
+
+$("#profile-img").change(function () {
     readURL(this);
     let fileName = $(this).val().split('\\').pop();
     $(this).siblings('.custom-file-label').addClass('selected').html(fileName);
@@ -24,16 +25,19 @@ function upload(event) {
         contentType: 'multipart/form-data',
         processData: false,
         contentType: false,
-        beforeSend : function() {
+        beforeSend: function () {
             $('#results').empty()
+            $('.wrap-loading').removeClass('display-none');
         },
-        success: function(data) {
+        success: function (data) {
+            $('#result_section').css('display', 'block');
+            $('.wrap-loading').addClass('display-none');
             $.each(data, function (index, item) {
                 var card_front = '<div class="col-md-3 col-sm-6 thumbnail-card">' +
                     '<div class="card card-flip h-100">' +
                     '<div class="card-front">' +
                     '<div class="card-body">' +
-                    '<img class="card-image" src="/media/' + item.image_src +'" onerror="this.onerror=null; this.src=\'/static/image_search/images/default.png\'">\n' +
+                    '<img class="card-image" src="/media/' + item.image_src + '" onerror="this.onerror=null; this.src=\'/static/image_search/images/default.png\'">\n' +
                     '<hr>\n' +
                     '<h5 class="card-title">Patent ID : ' + item.patent_id + '</h5>\n' +
                     '</div>\n' +
@@ -58,6 +62,6 @@ function upload(event) {
     return false;
 }
 
-$(function() {
+$(function () {
     $('#image_form').submit(upload);
 });
