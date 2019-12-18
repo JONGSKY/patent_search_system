@@ -4,7 +4,6 @@
 {% block javasrcipt %}
     <script src="{% static 'image_search/image_search.js' %}"></script>
 {% endblock %}
-{#https://www.codeply.com/go/roydoXgaLr/bootstrap-4-flip-cards#}
 {% block stylesheet %}
     <link href="{% static 'image_search/style.css' %}" rel="stylesheet">
 {% endblock %}
@@ -28,7 +27,7 @@
                         <form method="POST" id="image_form" enctype="multipart/form-data">
                             {% csrf_token %}
                             <div class="custom-file input-group">
-                                <input type="file" class="custom-file-input" name='image' id="profile-img">
+                                <input type="file" class="custom-file-input" name='image' id="profile-img" required>
                                 <label class="custom-file-label" id='img-label' for="customFile">Choose file</label>
                             </div>
                             <br><br>
@@ -36,7 +35,6 @@
                         </form>
                     </div>
                 </div>
-                {#                <button id="search_image" type="button" class="btn btn-primary"> 이미지 검색하기 </button>#}
             </div>
         </div>
     </section>
@@ -47,80 +45,6 @@
             <hr class="divider my-4">
             <br>
             <div id='results' class="row">
-{#                <div class="col-md-3 col-sm-6 thumbnail-card">#}
-{#                    <div class="card card-flip h-100">#}
-{#                        <div class="card-front">#}
-{#                            <div class="card-body">#}
-{#                                <img src="https://via.placeholder.com/300" class="card-img-top">#}
-{#                                <hr>#}
-{#                                <h5 class="card-title">Patent ID : 1000000</h5>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                        <div class="card-back bg-white">#}
-{#                            <div class="card-body">#}
-{#                                <h3 class="card-title">Back</h3>#}
-{#                                <hr>#}
-{#                                <p class="card-text">Suprise this one has more more more more content on the back!</p>#}
-{#                                <hr>#}
-{#                                <a href="#" class="btn btn-primary">Go somewhere</a>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
-{#                <div class="col-md-3 col-sm-6 thumbnail-card">#}
-{#                    <div class="card card-flip h-100">#}
-{#                        <div class="card-front">#}
-{#                            <div class="card-body">#}
-{#                                <img src="https://via.placeholder.com/300" class="card-img-top">#}
-{#                                <hr>#}
-{#                                <h5 class="card-title">Patent ID : 1000000</h5>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                        <div class="card-back bg-white">#}
-{#                            <div class="card-body">#}
-{#                                <h3 class="card-title">Back</h3>#}
-{#                                <p class="card-text">Suprise this one has more more more more content on the back!</p>#}
-{#                                <a href="#" class="btn btn-primary">Go somewhere</a>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
-{#                <div class="col-md-3 col-sm-6 thumbnail-card">#}
-{#                    <div class="card card-flip h-100">#}
-{#                        <div class="card-front">#}
-{#                            <div class="card-body">#}
-{#                                <img src="https://via.placeholder.com/300" class="card-img-top">#}
-{#                                <hr>#}
-{#                                <h5 class="card-title">Patent ID : 1000000</h5>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                        <div class="card-back bg-white">#}
-{#                            <div class="card-body">#}
-{#                                <h3 class="card-title">Back</h3>#}
-{#                                <p class="card-text">Suprise this one has more more more more content on the back!</p>#}
-{#                                <a href="#" class="btn btn-primary">Go somewhere</a>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
-{#                <div class="col-md-3 col-sm-6 thumbnail-card">#}
-{#                    <div class="card card-flip h-100">#}
-{#                        <div class="card-front">#}
-{#                            <div class="card-body">#}
-{#                                <img src="https://via.placeholder.com/300" class="card-img-top">#}
-{#                                <hr>#}
-{#                                <h5 class="card-title">Patent ID : 1000000</h5>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                        <div class="card-back bg-white">#}
-{#                            <div class="card-body">#}
-{#                                <h3 class="card-title">Back</h3>#}
-{#                                <p class="card-text">Suprise this one has more more more more content on the back!</p>#}
-{#                                <a href="#" class="btn btn-primary">Go somewhere</a>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
             </div>
         </div>
     </section>
