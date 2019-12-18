@@ -24,8 +24,10 @@ function upload(event) {
         contentType: 'multipart/form-data',
         processData: false,
         contentType: false,
+        beforeSend : function() {
+            $('#results').empty()
+        },
         success: function(data) {
-            $('#results').empty();
             $.each(data, function (index, item) {
                 var card_front = '<div class="col-md-3 col-sm-6 thumbnail-card">' +
                     '<div class="card card-flip h-100">' +
@@ -41,7 +43,7 @@ function upload(event) {
                     '<div class="card-body">\n' +
                     '<h6 class="card-title">' + item.title + '</h6>\n' +
                     '<hr>\n' +
-                    '<p class="card-text">' + item.abstract.slice(0, 170 - item.title.length) + '...' + '</p>\n' +
+                    '<p class="card-text">' + item.abstract.slice(0, 230 - item.title.length) + '...' + '</p>\n' +
                     '<hr>\n' +
                     '<a target="_blank" href="http://patents.google.com/patent/US' + item.patent_id + '" class="btn btn-primary">Google Patents</a>\n' +
                     '</div>\n' +
@@ -51,13 +53,6 @@ function upload(event) {
 
                 $('#results').append(card_front + card_back);
             });
-
-
-
-
-
-            // $('#image_form')[0].reset();
-            // alert('success');
         }
     });
     return false;
