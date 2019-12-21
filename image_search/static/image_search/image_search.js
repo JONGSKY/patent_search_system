@@ -37,7 +37,7 @@ function upload(event) {
                     '<div class="card card-flip h-100">' +
                     '<div class="card-front">' +
                     '<div class="card-body">' +
-                    '<img class="card-image" src="/media/' + item.image_src + '" onerror="this.onerror=null; this.src=\'/static/image_search/images/default.png\'">\n' +
+                    '<img class="card-image" src="/patent_images/' + item.image_src + '" onerror="this.onerror=null; this.src=\'/static/image_search/images/default.png\'">\n' +
                     '<hr>\n' +
                     '<h5 class="card-title">Patent ID : ' + item.patent_id + '</h5>\n' +
                     '</div>\n' +

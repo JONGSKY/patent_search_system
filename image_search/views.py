@@ -4,7 +4,7 @@ from patent_search_system import settings
 from image_search.src import get_embedding
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
-import os
+import os, pickle
 from text_search.models import Patent
 
 
@@ -19,10 +19,12 @@ def handle_uploaded_file(f):
 def index(request):
     return render(request, 'image_search/index.html')
 
+with open('embedding_dictionary.pkl', 'rb') as f:
+    embedding_dictionary = pickle.load(f)
 
-image_files = np.load('image_files.npy')
-total_embedding = np.load('embeddings.npy')
-        
+image_files = np.asarray(list(embedding_dictionary.keys()))
+total_embedding = np.asarray(list(embedding_dictionary.values())).reshape(-1, 256)
+del embedding_dictionary
 
 def image_upload(request):
     if request.method == 'POST':
