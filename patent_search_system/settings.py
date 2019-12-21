@@ -146,7 +146,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-MEDIA_URL = '/media/'
+MEDIA_URL = '/patent_images/'
 MEDIA_ROOT = os.path.abspath('/mnt/storage/patent_images')
 # MEDIA_ROOT = os.path.abspath('/home/jin-lab/workspace/image_search/patent_images')
 # Static files (CSS, JavaScript, Images)
