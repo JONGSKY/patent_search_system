@@ -14,3 +14,6 @@ patent_field_best_model.embed
 
 # search_image_data
 *.npy
+
+# Presentation script
+patent_system_대본.docx
