@@ -37,7 +37,7 @@ tensorboard==1.13.1
 tensorflow==1.13.1
 tensorflow-estimator==1.13.0
 termcolor==1.1.0
-urllib3==1.25.7
+urllib3==1.25.8
 Werkzeug==0.16.0
 cmake==3.15.3
 MulticoreTSNE==0.1
